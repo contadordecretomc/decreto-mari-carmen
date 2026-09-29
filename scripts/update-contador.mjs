@@ -3,21 +3,23 @@
 // counts unique visitors per path, so k keeps repeat emails from merging).
 // Total = Σ n × visitors. Run by .github/workflows/deploy.yml on a schedule.
 //
-// Env: GOATCOUNTER_SITE  site code (e.g. "contadordecretomc")
+// Env: GOATCOUNTER_SITE  site code (e.g. "micontador" for micontador.goatcounter.com)
 //      GOATCOUNTER_TOKEN API key with "Read statistics" permission
+//      CONTADOR_OUT      optional output path; on your own server, point it at the
+//                        published data/contador.json so no rebuild is needed
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '../public/data/contador.json');
+const OUT = process.env.CONTADOR_OUT || join(dirname(fileURLToPath(import.meta.url)), '../public/data/contador.json');
 // Trimmed: pasting into GitHub secrets easily drags a space or newline along.
 const SITE = process.env.GOATCOUNTER_SITE?.trim();
 const TOKEN = process.env.GOATCOUNTER_TOKEN?.trim();
 const START = '2026-09-29T00:00:00Z'; // campaign launch; the API wants RFC 3339 rounded to the hour
 const PATH_RE = /^\/?correos\/(\d+)(?:\/\d+)?$/;
-// End-to-end tests run on the live site before launch (29/09/2026), not real emails.
-const DESCUENTO_PRUEBAS = 1;
+// Subtract here any test clicks you don't want in the public total (0 = count everything).
+const DESCUENTO_PRUEBAS = 0;
 
 async function api(path, params, tries = 3) {
   const url = `https://${SITE}.goatcounter.com/api/v0/${path}?${new URLSearchParams(params)}`;

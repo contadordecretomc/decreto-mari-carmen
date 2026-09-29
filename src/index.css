@@ -212,11 +212,6 @@ a {
   margin: 16px 0 0;
 }
 
-.cbanda-meta strong {
-  color: var(--accent);
-  font-weight: 600;
-}
-
 /* Countdown: departures-board cells */
 .cuenta {
   margin: 0 0 26px;

@@ -24,39 +24,21 @@ function useCuentaAscendente(objetivo: number, ms = 1400) {
   return reduce ? objetivo : v;
 }
 
-export function ContadorBanda({ contador, mios }: { contador: ContadorData | null; mios: number }) {
+export function ContadorBanda({ contador }: { contador: ContadorData | null }) {
   const total = contador?.correos ?? 0;
   const visible = useCuentaAscendente(total);
 
   return (
     <section className="cbanda" aria-live="polite">
-      {total > 0 ? (
-        <>
-          <p className="cbanda-pre">La ciudadanía ha preparado</p>
-          <p className="cbanda-num num" aria-label={`${fmt(total)} correos`}>
-            {fmt(visible)}
-          </p>
-          <p className="cbanda-post">
-            correos a sus diputados para que voten a favor del <strong>Decreto Mari Carmen</strong>
-          </p>
-        </>
-      ) : (
-        <p className="cbanda-post">
-          Sé de las primeras personas en escribir a los diputados para que voten a favor del{' '}
-          <strong>Decreto Mari Carmen</strong>.
-        </p>
-      )}
-      <p className="cbanda-meta">
-        Se actualiza cada 10 minutos
-        {mios > 0 && (
-          <>
-            {' · '}
-            <strong>
-              Tú has preparado {fmt(mios)} {mios === 1 ? 'correo' : 'correos'}
-            </strong>
-          </>
-        )}
+      <p className="cbanda-pre">La ciudadanía ha preparado</p>
+      <p className="cbanda-num num" aria-label={`${fmt(total)} correos`}>
+        {fmt(visible)}
       </p>
+      <p className="cbanda-post">
+        {total === 1 ? 'correo' : 'correos'} a sus diputados para que voten a favor del{' '}
+        <strong>Decreto Mari Carmen</strong>
+      </p>
+      <p className="cbanda-meta">Se actualiza cada 10 minutos</p>
     </section>
   );
 }

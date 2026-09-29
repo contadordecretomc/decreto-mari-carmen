@@ -40,10 +40,6 @@ function guardar(ids: Set<number>) {
   }
 }
 
-export function misCorreos(): number {
-  return leer().size;
-}
-
 /** Registers the deputies a message is being prepared for; returns how many were new. */
 export function registrarCorreos(ids: number[]): number {
   const contados = leer();

@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "scrape": "node scripts/scrape-diputados.mjs",
+    "contador": "node scripts/update-contador.mjs",
     "artifact": "npm run build && node scripts/build-artifact.mjs"
   },
   "dependencies": {

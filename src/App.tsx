@@ -5,7 +5,7 @@ import { SeleccionPanel } from './components/SeleccionPanel';
 import { Ficha } from './components/Ficha';
 import { Hero } from './components/Hero';
 import { ContadorBanda } from './components/ContadorBanda';
-import { misCorreos, registrarCorreos } from './lib/contador';
+import { registrarCorreos } from './lib/contador';
 import type { GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
@@ -40,7 +40,6 @@ export default function App() {
   const [data, setData] = useState<DiputadosData | null>(readEmbeddedData);
   const [error, setError] = useState<string | null>(null);
   const [contador, setContador] = useState<ContadorData | null>(readEmbeddedContador);
-  const [mios, setMios] = useState(misCorreos);
   const [grupoSel, setGrupoSel] = useState<GrupoInfo | null>(null);
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState<Set<number>>(new Set());
@@ -67,7 +66,6 @@ export default function App() {
 
   function preparar(ids: number[]) {
     registrarCorreos(ids);
-    setMios(misCorreos());
   }
 
   const diputados = useMemo(() => data?.diputados ?? [], [data]);
@@ -133,7 +131,7 @@ export default function App() {
         onStart={() => document.querySelector('.hemi-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
       />
 
-      <ContadorBanda contador={contador} mios={mios} />
+      <ContadorBanda contador={contador} />
 
       <section className="callout callout--warning">
         <div className="eyebrow">Qué se vota</div>
