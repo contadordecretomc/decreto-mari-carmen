@@ -22,7 +22,13 @@ export function nombreCompleto(d: Diputado): string {
   return `${d.nombre} ${d.apellidos}`;
 }
 
-export function mailtoHref(d: Diputado): string | null {
+export interface Mensaje {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+export function mensaje(d: Diputado): Mensaje | null {
   const to = d.email ?? d.contactoGrupo?.email;
   if (!to) return null;
   const f = d.genero === 'f';
@@ -43,5 +49,9 @@ export function mailtoHref(d: Diputado): string | null {
     'Un saludo,',
     '',
   ].join('\n');
-  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return { to, subject, body };
+}
+
+export function mailtoHref(m: Mensaje): string {
+  return `mailto:${m.to}?subject=${encodeURIComponent(m.subject)}&body=${encodeURIComponent(m.body)}`;
 }

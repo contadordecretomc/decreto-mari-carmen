@@ -9,18 +9,26 @@ function normalize(s: string) {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
 
+// The single-file artifact build ships the data inline (see scripts/build-artifact.mjs).
+function readEmbeddedData(): DiputadosData | null {
+  const embedded = document.getElementById('diputados-data');
+  return embedded?.textContent ? JSON.parse(embedded.textContent) : null;
+}
+
 export default function App() {
-  const [data, setData] = useState<DiputadosData | null>(null);
+  const [data, setData] = useState<DiputadosData | null>(readEmbeddedData);
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [grupo, setGrupo] = useState(TODOS);
   const [circ, setCirc] = useState(TODOS);
 
   useEffect(() => {
+    if (data) return;
     fetch(import.meta.env.BASE_URL + 'data/diputados.json')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(setData)
       .catch((e: Error) => setError(e.message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
 
   const diputados = useMemo(() => data?.diputados ?? [], [data]);
