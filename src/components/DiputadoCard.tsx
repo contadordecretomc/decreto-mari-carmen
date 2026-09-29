@@ -21,9 +21,19 @@ export function DiputadoCard({ d }: { d: Diputado }) {
           <span className="dip-group">{grupoCorto(d.grupo)}</span> · {d.circunscripcion}
         </p>
         {mailto ? (
-          <a className="dip-cta" href={mailto}>
-            {cta}
-          </a>
+          <>
+            <a className="dip-cta" href={mailto}>
+              {cta}
+            </a>
+            {!d.email && d.contactoGrupo && (
+              <p className="dip-note">
+                No publica correo propio · le llegará a través de{' '}
+                <a href={d.contactoGrupo.fuente} target="_blank" rel="noopener noreferrer">
+                  {d.contactoGrupo.nombre}
+                </a>
+              </p>
+            )}
+          </>
         ) : (
           <>
             <a className="dip-cta dip-cta--nomail" href={d.ficha} target="_blank" rel="noopener noreferrer">

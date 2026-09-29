@@ -149,8 +149,9 @@ export default function App() {
           Fotos, nombres y correos proceden de las fichas públicas de cada diputado en{' '}
           <a href="https://www.congreso.es/es/busqueda-de-diputados">congreso.es</a> (XV Legislatura)
           {data && <>, consultadas el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. El botón abre tu
-          programa de correo con un mensaje que puedes editar antes de enviar. Quien no publica correo en su ficha enlaza
-          a ella.
+          programa de correo con un mensaje que puedes editar antes de enviar. A quien no publica correo en su ficha se le
+          escribe a la dirección general de su grupo parlamentario o su partido, indicando en el asunto a quién va
+          dirigido.
         </p>
       </footer>
     </div>

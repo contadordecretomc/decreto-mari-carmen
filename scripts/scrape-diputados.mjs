@@ -8,6 +8,7 @@
 import { writeFile, mkdir, access } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { contactoGrupo } from './contactos-grupos.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_JSON = join(ROOT, 'public/data/diputados.json');
@@ -135,6 +136,7 @@ async function main() {
       formacion: d.formacion,
       grupo: d.grupo,
       email,
+      contactoGrupo: email ? null : contactoGrupo(d.formacion),
       foto,
       ficha: fichaUrl(cod),
     };
@@ -147,7 +149,8 @@ async function main() {
     JSON.stringify({ actualizado: new Date().toISOString(), legislatura: LEGISLATURA, diputados }, null, 1) + '\n'
   );
   console.log(`OK → ${OUT_JSON} (${diputados.length} diputados, ${sinEmail.length} sin email)`);
-  for (const d of sinEmail) console.log(`  sin email: ${d.apellidos}, ${d.nombre}`);
+  for (const d of sinEmail)
+    console.log(`  sin email: ${d.apellidos}, ${d.nombre} → ${d.contactoGrupo?.email ?? 'SIN CONTACTO DE GRUPO'}`);
 }
 
 main().catch((err) => {

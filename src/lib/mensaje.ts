@@ -23,10 +23,15 @@ export function nombreCompleto(d: Diputado): string {
 }
 
 export function mailtoHref(d: Diputado): string | null {
-  if (!d.email) return null;
+  const to = d.email ?? d.contactoGrupo?.email;
+  if (!to) return null;
   const f = d.genero === 'f';
-  const subject = 'Vote a favor del Decreto Mari Carmen este viernes';
+  const subject = d.email
+    ? 'Vote a favor del Decreto Mari Carmen este viernes'
+    : `Para ${d.nombre} ${d.apellidos}: vote a favor del Decreto Mari Carmen este viernes`;
   const body = [
+    // Group/party inboxes need to know who the message is for.
+    ...(d.email ? [] : [`A la atención ${f ? 'de la diputada' : 'del diputado'} ${d.nombre} ${d.apellidos}`, '']),
     `${f ? 'Estimada' : 'Estimado'} ${d.nombre} ${d.apellidos}:`,
     '',
     `Le escribo como ciudadano/a para pedirle que ${VOTACION} vote a favor de convalidar en el Congreso los dos reales decretos de vivienda conocidos como "Decreto Mari Carmen", aprobados hoy por el Consejo de Ministros.`,
@@ -38,5 +43,5 @@ export function mailtoHref(d: Diputado): string | null {
     'Un saludo,',
     '',
   ].join('\n');
-  return `mailto:${d.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

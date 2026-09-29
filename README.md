@@ -13,8 +13,12 @@ dirigido a su dirección pública.
 2. La ficha pública de cada uno, de donde se extrae el correo (`@congreso.es`).
 3. Su foto oficial, guardada en `public/fotos/<id>.jpg`.
 
-Resultado: `public/data/diputados.json`. Quien no publica correo en su ficha tiene `email: null`
-y el botón enlaza a su ficha oficial. No se infieren direcciones.
+Resultado: `public/data/diputados.json`. No se infieren direcciones.
+
+31 diputados no publican correo en su ficha (en ninguna legislatura). Para ellos, `contactoGrupo`
+guarda la dirección general de su grupo parlamentario o su partido, verificada a mano en la web de
+cada uno ([scripts/contactos-grupos.mjs](scripts/contactos-grupos.mjs)). El correo va con
+«A la atención de…» y el nombre en el asunto.
 
 Añade `--force-photos` para volver a descargar las fotos.
 
