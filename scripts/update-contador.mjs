@@ -11,7 +11,9 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const OUT = join(dirname(fileURLToPath(import.meta.url)), '../public/data/contador.json');
-const { GOATCOUNTER_SITE: SITE, GOATCOUNTER_TOKEN: TOKEN } = process.env;
+// Trimmed: pasting into GitHub secrets easily drags a space or newline along.
+const SITE = process.env.GOATCOUNTER_SITE?.trim();
+const TOKEN = process.env.GOATCOUNTER_TOKEN?.trim();
 const START = '2026-09-29T00:00:00Z'; // campaign launch; the API wants RFC 3339 rounded to the hour
 const PATH_RE = /^\/?correos\/(\d+)(?:\/\d+)?$/;
 
