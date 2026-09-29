@@ -15,6 +15,9 @@ export interface Diputado {
   email: string | null;
   /** Group/party address, only when the deputy publishes no email of their own. */
   contactoGrupo: ContactoGrupo | null;
+  biografia: string | null;
+  /** dd/mm/yyyy, from Congreso open data. */
+  fechaAlta: string | null;
   foto: string | null;
   ficha: string;
 }

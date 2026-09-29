@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { DiputadosData } from './types';
-import { DiputadoCard } from './components/DiputadoCard';
-import { grupoCorto, VOTACION } from './lib/mensaje';
-
-const TODOS = 'Todos';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { Diputado, DiputadosData } from './types';
+import { Hemiciclo } from './components/Hemiciclo';
+import { SeleccionPanel } from './components/SeleccionPanel';
+import { Ficha } from './components/Ficha';
+import type { GrupoInfo } from './lib/grupos';
+import { VOTACION } from './lib/mensaje';
 
 function normalize(s: string) {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -15,12 +16,26 @@ function readEmbeddedData(): DiputadosData | null {
   return embedded?.textContent ? JSON.parse(embedded.textContent) : null;
 }
 
+function useHash() {
+  const [hash, setHash] = useState(() => window.location.hash);
+  useEffect(() => {
+    const onChange = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', onChange);
+    return () => window.removeEventListener('hashchange', onChange);
+  }, []);
+  return hash;
+}
+
+const PANEL_ID = 'seleccion';
+
 export default function App() {
   const [data, setData] = useState<DiputadosData | null>(readEmbeddedData);
   const [error, setError] = useState<string | null>(null);
+  const [grupoSel, setGrupoSel] = useState<GrupoInfo | null>(null);
   const [query, setQuery] = useState('');
-  const [grupo, setGrupo] = useState(TODOS);
-  const [circ, setCirc] = useState(TODOS);
+  const [seleccion, setSeleccion] = useState<Set<number>>(new Set());
+  const panelRef = useRef<HTMLDivElement>(null);
+  const hash = useHash();
 
   useEffect(() => {
     if (data) return;
@@ -33,28 +48,59 @@ export default function App() {
 
   const diputados = useMemo(() => data?.diputados ?? [], [data]);
 
-  const grupos = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const d of diputados) counts.set(grupoCorto(d.grupo), (counts.get(grupoCorto(d.grupo)) ?? 0) + 1);
-    return [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  }, [diputados]);
+  function buscar(q: string): Diputado[] {
+    const n = normalize(q.trim());
+    if (!n) return [];
+    return diputados.filter((d) => normalize(`${d.nombre} ${d.apellidos} ${d.circunscripcion}`).includes(n));
+  }
 
-  const circunscripciones = useMemo(
-    () => [...new Set(diputados.map((d) => d.circunscripcion))].sort((a, b) => a.localeCompare(b, 'es')),
-    [diputados]
-  );
+  const enPanel: Diputado[] = query.trim()
+    ? buscar(query)
+    : grupoSel
+      ? diputados.filter((d) => d.grupo === grupoSel.grupo)
+      : [];
 
-  const visibles = useMemo(() => {
-    const q = normalize(query.trim());
-    return diputados.filter(
-      (d) =>
-        (grupo === TODOS || grupoCorto(d.grupo) === grupo) &&
-        (circ === TODOS || d.circunscripcion === circ) &&
-        (!q || normalize(`${d.nombre} ${d.apellidos} ${d.circunscripcion}`).includes(q))
+  function seleccionarGrupo(g: GrupoInfo) {
+    setGrupoSel(g);
+    setQuery('');
+    setSeleccion(new Set(diputados.filter((d) => d.grupo === g.grupo).map((d) => d.id)));
+    requestAnimationFrame(() => panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  }
+
+  function onQuery(q: string) {
+    setQuery(q);
+    setSeleccion(new Set((q.trim() ? buscar(q) : grupoSel ? diputados.filter((d) => d.grupo === grupoSel.grupo) : []).map((d) => d.id)));
+  }
+
+  function toggle(id: number) {
+    setSeleccion((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  const fichaId = Number(/^#d-(\d+)$/.exec(hash)?.[1]);
+  const ficha = fichaId ? diputados.find((d) => d.id === fichaId) : undefined;
+
+  useEffect(() => {
+    if (ficha) window.scrollTo(0, 0);
+    else if (hash === `#${PANEL_ID}`) panelRef.current?.scrollIntoView({ block: 'start' });
+  }, [ficha, hash]);
+
+  if (ficha) {
+    return (
+      <div className="app">
+        <p className="site-mark">
+          <a href={`#${PANEL_ID}`}>Decreto Mari Carmen</a>
+        </p>
+        <Ficha d={ficha} backHref={`#${PANEL_ID}`} />
+      </div>
     );
-  }, [diputados, query, grupo, circ]);
+  }
 
-  const conEmail = diputados.filter((d) => d.email).length;
+  const panelGrupo = !query.trim() && grupoSel;
 
   return (
     <div className="app">
@@ -63,7 +109,7 @@ export default function App() {
         <h1>Decreto Mari Carmen</h1>
         <p className="app-subtitle">
           Hoy el Consejo de Ministros ha aprobado dos reales decretos de vivienda. Para seguir en vigor, el Congreso tiene
-          que convalidarlos {VOTACION}. Estos son los 350 diputados y diputadas que deciden.
+          que convalidarlos {VOTACION}. Elige un grupo parlamentario en el hemiciclo y escribe a sus diputados.
         </p>
       </header>
 
@@ -82,21 +128,6 @@ export default function App() {
         </p>
       </section>
 
-      <section className="stats">
-        <div>
-          <span className="stat-value">350</span>
-          <span className="stat-label">escaños</span>
-        </div>
-        <div>
-          <span className="stat-value">176</span>
-          <span className="stat-label">votos para mayoría absoluta</span>
-        </div>
-        <div>
-          <span className="stat-value">{data ? conEmail : '—'}</span>
-          <span className="stat-label">con correo público</span>
-        </div>
-      </section>
-
       <main>
         {!data && !error && <p className="status-message">Cargando diputados…</p>}
         {error && (
@@ -106,47 +137,44 @@ export default function App() {
         )}
         {data && (
           <>
-            <div className="filters">
-              <input
-                className="search"
-                type="search"
-                placeholder="Busca por nombre o provincia…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label="Buscar diputado"
-              />
-              <select
-                className="select"
-                value={circ}
-                onChange={(e) => setCirc(e.target.value)}
-                aria-label="Filtrar por circunscripción"
-              >
-                <option value={TODOS}>Todas las provincias</option>
-                {circunscripciones.map((c) => (
-                  <option key={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-            <div className="chips" role="group" aria-label="Filtrar por grupo parlamentario">
-              {[[TODOS, diputados.length] as const, ...grupos].map(([g, n]) => (
-                <button
-                  key={g}
-                  type="button"
-                  className={`chip${grupo === g ? ' chip--on' : ''}`}
-                  onClick={() => setGrupo(g)}
-                  aria-pressed={grupo === g}
-                >
-                  {g} <span className="num">{n}</span>
-                </button>
-              ))}
-            </div>
-            <p className="results-count num">
-              {visibles.length} {visibles.length === 1 ? 'diputado' : 'diputados'}
-            </p>
-            <div className="dip-grid">
-              {visibles.map((d) => (
-                <DiputadoCard key={d.id} d={d} />
-              ))}
+            <section className="hemi-panel">
+              <Hemiciclo diputados={diputados} selected={panelGrupo ? grupoSel.id : null} onSelect={seleccionarGrupo} />
+              <div className="filters">
+                <input
+                  id="buscar"
+                  className="search"
+                  type="search"
+                  placeholder="O busca a alguien por nombre o provincia…"
+                  value={query}
+                  onChange={(e) => onQuery(e.target.value)}
+                  aria-label="Buscar diputado por nombre o provincia"
+                />
+              </div>
+            </section>
+
+            <div id={PANEL_ID} ref={panelRef} className="panel-anchor">
+              {enPanel.length > 0 ? (
+                <SeleccionPanel
+                  key={panelGrupo ? panelGrupo.id : 'busqueda'}
+                  titulo={panelGrupo ? panelGrupo.grupo : `Resultados para «${query.trim()}»`}
+                  ctaTodos={
+                    panelGrupo
+                      ? `Escribir a los diputados del ${panelGrupo.grupo}`
+                      : `Escribir a ${enPanel.length === 1 ? '1 diputado' : `los ${enPanel.length} diputados`}`
+                  }
+                  color={panelGrupo ? panelGrupo.color : undefined}
+                  diputados={enPanel}
+                  seleccion={seleccion}
+                  onToggle={toggle}
+                  onAll={(on) => setSeleccion(new Set(on ? enPanel.map((d) => d.id) : []))}
+                />
+              ) : query.trim() ? (
+                <p className="status-message">Nadie coincide con «{query.trim()}».</p>
+              ) : (
+                <p className="panel-empty muted">
+                  Pulsa un grupo del hemiciclo para ver a sus diputados y escribirles.
+                </p>
+              )}
             </div>
           </>
         )}
@@ -154,12 +182,12 @@ export default function App() {
 
       <footer className="app-footer">
         <p>
-          Fotos, nombres y correos proceden de las fichas públicas de cada diputado en{' '}
-          <a href="https://www.congreso.es/es/busqueda-de-diputados">congreso.es</a> (XV Legislatura)
-          {data && <>, consultadas el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. El botón abre tu
-          programa de correo con un mensaje que puedes editar antes de enviar. A quien no publica correo en su ficha se le
-          escribe a la dirección general de su grupo parlamentario o su partido, indicando en el asunto a quién va
-          dirigido.
+          Fotos, nombres, correos y biografías proceden de las fichas públicas de cada diputado en{' '}
+          <a href="https://www.congreso.es/es/busqueda-de-diputados">congreso.es</a> y de sus datos abiertos (XV
+          Legislatura)
+          {data && <>, consultados el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. Los botones abren tu
+          aplicación de correo con un mensaje que puedes editar antes de enviar. A quien no publica correo en su ficha se
+          le escribe a la dirección general de su grupo parlamentario o su partido.
         </p>
       </footer>
     </div>

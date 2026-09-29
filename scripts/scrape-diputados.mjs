@@ -9,6 +9,7 @@ import { writeFile, mkdir, access } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { contactoGrupo } from './contactos-grupos.mjs';
+import { fetchOpenData } from './opendata.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_JSON = join(ROOT, 'public/data/diputados.json');
@@ -112,6 +113,7 @@ async function main() {
   await mkdir(dirname(OUT_JSON), { recursive: true });
 
   const lista = await listDiputados();
+  const openData = await fetchOpenData();
   console.log(`Diputados en activo: ${lista.length}`);
 
   let done = 0;
@@ -137,6 +139,7 @@ async function main() {
       grupo: d.grupo,
       email,
       contactoGrupo: email ? null : contactoGrupo(d.formacion),
+      ...openData(d.apellidos.trim(), d.nombre.trim()),
       foto,
       ficha: fichaUrl(cod),
     };
