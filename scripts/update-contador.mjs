@@ -63,6 +63,7 @@ async function main() {
   try {
     const end = nextHour();
     const seen = [];
+    const diag = [];
     let correos = 0;
     // stats/hits pages through paths; exclude_paths skips the ones already read.
     for (let page = 0; page < 200; page++) {
@@ -71,6 +72,7 @@ async function main() {
       const res = await api('stats/hits', params);
       for (const h of res.hits ?? []) {
         seen.push(h.path_id);
+        diag.push(`${h.path} = ${h.count}${h.event ? ' (evento)' : ''}`);
         const n = Number(PATH_RE.exec(h.path)?.[1]);
         if (n > 0 && n <= 350) correos += n * (h.count ?? 0);
       }
@@ -78,7 +80,9 @@ async function main() {
     }
     const bruto = correos;
     correos = Math.max(0, correos - DESCUENTO_PRUEBAS);
-    await writeFile(OUT, JSON.stringify({ correos, actualizado: new Date().toISOString() }, null, 1) + '\n');
+    // TEMPORAL: diagnóstico de rutas hasta verificar la cadena completa.
+    const rutas = diag.slice(0, 20);
+    await writeFile(OUT, JSON.stringify({ correos, actualizado: new Date().toISOString(), rutas }, null, 1) + '\n');
     console.log(`contador.json → ${correos} correos (${bruto} en GoatCounter − ${DESCUENTO_PRUEBAS} de prueba)`);
   } catch (err) {
     // Never break the deploy over the counter: keep the last number, expose the reason.
