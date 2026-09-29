@@ -1,24 +1,7 @@
 import type { Diputado } from '../types';
 import { fotoSrc } from '../lib/foto';
+import { CuentaAtras } from './CuentaAtras';
 
-// Pleno extraordinario de convalidación (Europe/Madrid calendar day).
-const VOTE_DAY = new Date(2026, 9, 2);
-
-function diasHastaVotacion(now = new Date()): number {
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.round((VOTE_DAY.getTime() - today.getTime()) / 86_400_000);
-}
-
-function Cuenta() {
-  const dias = diasHastaVotacion();
-  if (dias < 0) return <dd className="hero-stat-label">Votación celebrada el 2 de octubre</dd>;
-  return (
-    <>
-      <dt className="hero-stat-value num">{dias === 0 ? 'HOY' : dias}</dt>
-      <dd className="hero-stat-label">{dias === 0 ? 'se vota en el Congreso' : dias === 1 ? 'día para la votación' : 'días para la votación'}</dd>
-    </>
-  );
-}
 
 export function Hero({ diputados, onStart }: { diputados: Diputado[]; onStart: () => void }) {
   return (
@@ -29,7 +12,7 @@ export function Hero({ diputados, onStart }: { diputados: Diputado[]; onStart: (
 
       <div className="hero-strip num" aria-hidden="true">
         <span>Pleno extraordinario</span>
-        <span>Viernes 2 de octubre</span>
+        <span>Viernes 2 de octubre · 11:00</span>
         <span>Congreso de los Diputados</span>
       </div>
 
@@ -42,6 +25,8 @@ export function Hero({ diputados, onStart }: { diputados: Diputado[]; onStart: (
           Mari Carmen tiene 87 años y la desahuciaron en Madrid. Este viernes, el Congreso decide si las medidas de
           vivienda que llevan su nombre siguen adelante. Los diputados tienen que saber que las estamos mirando.
         </p>
+
+        <CuentaAtras />
 
         <div className="hero-actions">
           <button type="button" className="hero-cta" onClick={onStart}>
@@ -59,7 +44,8 @@ export function Hero({ diputados, onStart }: { diputados: Diputado[]; onStart: (
             <dd className="hero-stat-label">votos para mayoría absoluta</dd>
           </div>
           <div>
-            <Cuenta />
+            <dt className="hero-stat-value num">2</dt>
+            <dd className="hero-stat-label">decretos en juego</dd>
           </div>
         </dl>
       </div>

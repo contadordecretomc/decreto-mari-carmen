@@ -160,6 +160,60 @@ a {
   margin: 0 0 26px;
 }
 
+/* Countdown: departures-board cells */
+.cuenta {
+  margin: 0 0 26px;
+}
+
+.cuenta-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(242, 244, 239, 0.75);
+  margin: 0 0 8px;
+}
+
+.cuenta--fin .cuenta-label {
+  font-size: 13px;
+  color: var(--paper);
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+}
+
+.cuenta-cells {
+  display: flex;
+  gap: 8px;
+}
+
+.cuenta-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 76px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1.5px solid var(--paper);
+  border-radius: 2px;
+  padding: 8px 10px 6px;
+  box-shadow: 3px 3px 0 var(--accent);
+}
+
+.cuenta-num {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.cuenta-unit {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-top: 4px;
+}
+
 .hero-actions {
   margin-bottom: 34px;
 }
@@ -260,6 +314,17 @@ a {
 
   .hero-cta {
     width: 100%;
+  }
+
+  .cuenta-cells {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .cuenta-cell {
+    min-width: 0;
+    padding: 6px 4px 5px;
   }
 }
 
