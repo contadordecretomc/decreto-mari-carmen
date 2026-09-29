@@ -16,6 +16,8 @@ const SITE = process.env.GOATCOUNTER_SITE?.trim();
 const TOKEN = process.env.GOATCOUNTER_TOKEN?.trim();
 const START = '2026-09-29T00:00:00Z'; // campaign launch; the API wants RFC 3339 rounded to the hour
 const PATH_RE = /^\/?correos\/(\d+)(?:\/\d+)?$/;
+// End-to-end tests run on the live site before launch (29/09/2026), not real emails.
+const DESCUENTO_PRUEBAS = 0;
 
 async function api(path, params, tries = 3) {
   const url = `https://${SITE}.goatcounter.com/api/v0/${path}?${new URLSearchParams(params)}`;
@@ -74,8 +76,10 @@ async function main() {
       }
       if (!res.more || !res.hits?.length) break;
     }
+    const bruto = correos;
+    correos = Math.max(0, correos - DESCUENTO_PRUEBAS);
     await writeFile(OUT, JSON.stringify({ correos, actualizado: new Date().toISOString() }, null, 1) + '\n');
-    console.log(`contador.json → ${correos} correos`);
+    console.log(`contador.json → ${correos} correos (${bruto} en GoatCounter − ${DESCUENTO_PRUEBAS} de prueba)`);
   } catch (err) {
     // Never break the deploy over the counter: keep the last number, expose the reason.
     await writeFile(OUT, JSON.stringify({ ...prev, error: String(err.message) }, null, 1) + '\n');
