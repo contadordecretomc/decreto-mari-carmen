@@ -4,7 +4,14 @@ import { grupoInfo } from '../lib/grupos';
 import { fotoSrc } from '../lib/foto';
 import { CopyButton } from './CopyButton';
 
-export function Ficha({ d, backHref }: { d: Diputado; backHref: string }) {
+interface Props {
+  d: Diputado;
+  backHref: string;
+  /** Counts the deputy as a prepared email (see lib/contador.ts). */
+  onPreparar: (ids: number[]) => void;
+}
+
+export function Ficha({ d, backHref, onPreparar }: Props) {
   const nombre = nombreCompleto(d);
   const g = grupoInfo(d.grupo);
   const m = mensaje(d);
@@ -52,12 +59,16 @@ export function Ficha({ d, backHref }: { d: Diputado; backHref: string }) {
       <section className="ficha-escribir">
         {m ? (
           <>
-            <a className="dip-cta" href={mailtoHref(m)}>
+            <a className="dip-cta" href={mailtoHref(m)} onClick={() => onPreparar([d.id])}>
               {cta}
             </a>
             <div className="copy-row">
               <CopyButton text={m.to} label="Copiar dirección" />
-              <CopyButton text={`${m.subject}\n\n${m.body}`} label="Copiar mensaje" />
+              <CopyButton
+                text={`${m.subject}\n\n${m.body}`}
+                label="Copiar mensaje"
+                onCopy={() => onPreparar([d.id])}
+              />
             </div>
             {!d.email && d.contactoGrupo && (
               <p className="dip-note">

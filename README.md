@@ -29,3 +29,21 @@ npm install
 npm run dev      # http://localhost:5902
 npm run build    # genera dist/, desplegable en cualquier hosting estático
 ```
+
+## Contador de correos preparados
+
+Cada clic en un botón de escribir (o «Copiar mensaje») envía a GoatCounter un evento anónimo
+`correos/<n>`, con `n` = diputados nuevos para ese navegador (cada navegador cuenta a cada diputado
+una vez). No hay cookies ni datos personales.
+
+La web no consulta nada en directo: `.github/workflows/deploy.yml` se ejecuta cada 10 minutos,
+suma `n × visitas` con `scripts/update-contador.mjs`, escribe `public/data/contador.json` y
+publica en GitHub Pages.
+
+Configuración:
+
+1. `src/config.ts` → `GOATCOUNTER_CODE` con el código del sitio de GoatCounter.
+2. En GitHub → Settings → Secrets and variables → Actions:
+   - Variable `GOATCOUNTER_SITE` = el mismo código.
+   - Secret `GOATCOUNTER_TOKEN` = API key de GoatCounter con permiso «Read statistics».
+3. Settings → Pages → Source: **GitHub Actions**.

@@ -49,6 +49,8 @@ async function main() {
 
   // `<` escaped so no string in the data can close the <script> early.
   const json = JSON.stringify(data).replace(/</g, '\\u003c');
+  // The artifact can't fetch the live counter, so it shows the value at build time.
+  const contador = (await readFile(join(ROOT, 'public/data/contador.json'), 'utf8')).trim();
 
   const page = `<title>Decreto Mari Carmen</title>
 <meta name="description" content="Escribe a tu diputado o diputada: que vote a favor de convalidar el Decreto Mari Carmen este viernes en el Congreso." />
@@ -58,6 +60,7 @@ async function main() {
 <style>${css}</style>
 <div id="root"></div>
 <script type="application/json" id="diputados-data">${json}</script>
+<script type="application/json" id="contador-data">${contador}</script>
 <script type="module">${js.replace(/<\/script/gi, '<\\/script')}</script>
 `;
 

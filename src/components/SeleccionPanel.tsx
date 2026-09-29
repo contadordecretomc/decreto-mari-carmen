@@ -12,13 +12,16 @@ interface Props {
   seleccion: Set<number>;
   onToggle: (id: number) => void;
   onAll: (on: boolean) => void;
+  /** Counts the selected deputies as prepared emails (see lib/contador.ts). */
+  onPreparar: (ids: number[]) => void;
 }
 
-export function SeleccionPanel({ titulo, ctaTodos, color, diputados, seleccion, onToggle, onAll }: Props) {
+export function SeleccionPanel({ titulo, ctaTodos, color, diputados, seleccion, onToggle, onAll, onPreparar }: Props) {
   const elegidos = diputados.filter((d) => seleccion.has(d.id));
   const m = mensajeColectivo(elegidos);
   const { viaGrupo } = direcciones(elegidos);
   const todos = elegidos.length === diputados.length;
+  const preparar = () => onPreparar(elegidos.map((d) => d.id));
   const cta = todos ? ctaTodos : `Escribir a ${elegidos.length === 1 ? '1 diputado' : `los ${elegidos.length} diputados`} seleccionados`;
 
   return (
@@ -42,7 +45,7 @@ export function SeleccionPanel({ titulo, ctaTodos, color, diputados, seleccion, 
 
       <div className="panel-actions">
         {elegidos.length ? (
-          <a className="dip-cta panel-cta" href={mailtoCcHref(m)}>
+          <a className="dip-cta panel-cta" href={mailtoCcHref(m)} onClick={preparar}>
             {cta}
           </a>
         ) : (
@@ -52,7 +55,7 @@ export function SeleccionPanel({ titulo, ctaTodos, color, diputados, seleccion, 
         )}
         <div className="copy-row">
           <CopyButton text={m.cc.join(', ')} label="Copiar direcciones" />
-          <CopyButton text={`${m.subject}\n\n${m.body}`} label="Copiar mensaje" />
+          <CopyButton text={`${m.subject}\n\n${m.body}`} label="Copiar mensaje" onCopy={preparar} />
         </div>
         <p className="dip-note">
           Abre tu aplicación de correo con {m.cc.length} {m.cc.length === 1 ? 'dirección' : 'direcciones'} en copia (CC).

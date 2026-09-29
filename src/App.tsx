@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Diputado, DiputadosData } from './types';
+import type { ContadorData, Diputado, DiputadosData } from './types';
 import { Hemiciclo } from './components/Hemiciclo';
 import { SeleccionPanel } from './components/SeleccionPanel';
 import { Ficha } from './components/Ficha';
 import { Hero } from './components/Hero';
+import { misCorreos, registrarCorreos } from './lib/contador';
 import type { GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
@@ -13,6 +14,12 @@ function normalize(s: string) {
 // The single-file artifact build ships the data inline (see scripts/build-artifact.mjs).
 function readEmbeddedData(): DiputadosData | null {
   const embedded = document.getElementById('diputados-data');
+  return embedded?.textContent ? JSON.parse(embedded.textContent) : null;
+}
+
+// Same inline-or-fetch pattern for the counter, which the GitHub Action rewrites.
+function readEmbeddedContador(): ContadorData | null {
+  const embedded = document.getElementById('contador-data');
   return embedded?.textContent ? JSON.parse(embedded.textContent) : null;
 }
 
@@ -31,6 +38,8 @@ const PANEL_ID = 'seleccion';
 export default function App() {
   const [data, setData] = useState<DiputadosData | null>(readEmbeddedData);
   const [error, setError] = useState<string | null>(null);
+  const [contador, setContador] = useState<ContadorData | null>(readEmbeddedContador);
+  const [mios, setMios] = useState(misCorreos);
   const [grupoSel, setGrupoSel] = useState<GrupoInfo | null>(null);
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState<Set<number>>(new Set());
@@ -45,6 +54,20 @@ export default function App() {
       .catch((e: Error) => setError(e.message));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
+
+  useEffect(() => {
+    if (contador) return;
+    fetch(import.meta.env.BASE_URL + 'data/contador.json', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then(setContador)
+      .catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
+  }, []);
+
+  function preparar(ids: number[]) {
+    registrarCorreos(ids);
+    setMios(misCorreos());
+  }
 
   const diputados = useMemo(() => data?.diputados ?? [], [data]);
 
@@ -95,7 +118,7 @@ export default function App() {
         <p className="site-mark">
           <a href={`#${PANEL_ID}`}>Decreto Mari Carmen</a>
         </p>
-        <Ficha d={ficha} backHref={`#${PANEL_ID}`} />
+        <Ficha d={ficha} backHref={`#${PANEL_ID}`} onPreparar={preparar} />
       </div>
     );
   }
@@ -106,6 +129,8 @@ export default function App() {
     <div className="app">
       <Hero
         diputados={diputados}
+        contador={contador}
+        mios={mios}
         onStart={() => document.querySelector('.hemi-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
       />
 
@@ -163,6 +188,7 @@ export default function App() {
                   seleccion={seleccion}
                   onToggle={toggle}
                   onAll={(on) => setSeleccion(new Set(on ? enPanel.map((d) => d.id) : []))}
+                  onPreparar={preparar}
                 />
               ) : query.trim() ? (
                 <p className="status-message">Nadie coincide con «{query.trim()}».</p>
@@ -183,7 +209,8 @@ export default function App() {
           Legislatura)
           {data && <>, consultados el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. Los botones abren tu
           aplicación de correo con un mensaje que puedes editar antes de enviar. A quien no publica correo en su ficha se
-          le escribe a la dirección general de su grupo parlamentario o su partido.
+          le escribe a la dirección general de su grupo parlamentario o su partido. Para el contador de correos preparados se
+          registra, sin cookies ni datos personales, cuántos diputados incluye cada correo (con GoatCounter).
         </p>
       </footer>
     </div>

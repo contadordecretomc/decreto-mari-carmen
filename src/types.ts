@@ -27,3 +27,9 @@ export interface DiputadosData {
   legislatura: number;
   diputados: Diputado[];
 }
+
+export interface ContadorData {
+  /** Deputies written to from this site (one email × one deputy = 1). */
+  correos: number;
+  actualizado: string | null;
+}
