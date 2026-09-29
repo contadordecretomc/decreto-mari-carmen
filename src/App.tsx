@@ -3,8 +3,8 @@ import type { Diputado, DiputadosData } from './types';
 import { Hemiciclo } from './components/Hemiciclo';
 import { SeleccionPanel } from './components/SeleccionPanel';
 import { Ficha } from './components/Ficha';
+import { Hero } from './components/Hero';
 import type { GrupoInfo } from './lib/grupos';
-import { VOTACION } from './lib/mensaje';
 
 function normalize(s: string) {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -104,14 +104,10 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <div className="eyebrow">Pleno extraordinario · {VOTACION}</div>
-        <h1>Decreto Mari Carmen</h1>
-        <p className="app-subtitle">
-          Hoy el Consejo de Ministros ha aprobado dos reales decretos de vivienda. Para seguir en vigor, el Congreso tiene
-          que convalidarlos {VOTACION}. Elige un grupo parlamentario en el hemiciclo y escribe a sus diputados.
-        </p>
-      </header>
+      <Hero
+        diputados={diputados}
+        onStart={() => document.querySelector('.hemi-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+      />
 
       <section className="callout callout--warning">
         <div className="eyebrow">Qué se vota</div>
