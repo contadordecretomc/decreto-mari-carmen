@@ -17,7 +17,7 @@ const TOKEN = process.env.GOATCOUNTER_TOKEN?.trim();
 const START = '2026-09-29T00:00:00Z'; // campaign launch; the API wants RFC 3339 rounded to the hour
 const PATH_RE = /^\/?correos\/(\d+)(?:\/\d+)?$/;
 // End-to-end tests run on the live site before launch (29/09/2026), not real emails.
-const DESCUENTO_PRUEBAS = 0;
+const DESCUENTO_PRUEBAS = 1;
 
 async function api(path, params, tries = 3) {
   const url = `https://${SITE}.goatcounter.com/api/v0/${path}?${new URLSearchParams(params)}`;
@@ -63,7 +63,6 @@ async function main() {
   try {
     const end = nextHour();
     const seen = [];
-    const diag = [];
     let correos = 0;
     // stats/hits pages through paths; exclude_paths skips the ones already read.
     for (let page = 0; page < 200; page++) {
@@ -72,7 +71,6 @@ async function main() {
       const res = await api('stats/hits', params);
       for (const h of res.hits ?? []) {
         seen.push(h.path_id);
-        diag.push(`${h.path} = ${h.count}${h.event ? ' (evento)' : ''}`);
         const n = Number(PATH_RE.exec(h.path)?.[1]);
         if (n > 0 && n <= 350) correos += n * (h.count ?? 0);
       }
@@ -80,9 +78,7 @@ async function main() {
     }
     const bruto = correos;
     correos = Math.max(0, correos - DESCUENTO_PRUEBAS);
-    // TEMPORAL: diagnóstico de rutas hasta verificar la cadena completa.
-    const rutas = diag.slice(0, 20);
-    await writeFile(OUT, JSON.stringify({ correos, actualizado: new Date().toISOString(), rutas }, null, 1) + '\n');
+    await writeFile(OUT, JSON.stringify({ correos, actualizado: new Date().toISOString() }, null, 1) + '\n');
     console.log(`contador.json → ${correos} correos (${bruto} en GoatCounter − ${DESCUENTO_PRUEBAS} de prueba)`);
   } catch (err) {
     // Never break the deploy over the counter: keep the last number, expose the reason.

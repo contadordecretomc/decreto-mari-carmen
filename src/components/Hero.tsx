@@ -1,19 +1,14 @@
-import type { ContadorData, Diputado } from '../types';
+import type { Diputado } from '../types';
 import { fotoSrc } from '../lib/foto';
 import { CuentaAtras } from './CuentaAtras';
 
 
 interface Props {
   diputados: Diputado[];
-  contador: ContadorData | null;
-  /** Deputies this browser has written to. */
-  mios: number;
   onStart: () => void;
 }
 
-const fmt = (n: number) => n.toLocaleString('es-ES');
-
-export function Hero({ diputados, contador, mios, onStart }: Props) {
+export function Hero({ diputados, onStart }: Props) {
   return (
     <header className="hero">
       <div className="hero-mosaic" aria-hidden="true">
@@ -42,20 +37,6 @@ export function Hero({ diputados, contador, mios, onStart }: Props) {
           <button type="button" className="hero-cta" onClick={onStart}>
             Escribe a tus diputados ↓
           </button>
-          {(contador?.correos ?? 0) > 0 && (
-            <p className="hero-contador">
-              <span className="hero-contador-num num">{fmt(contador!.correos)}</span>
-              <span className="hero-contador-label">
-                correos preparados desde esta web
-                {mios > 0 && <> · {fmt(mios)} tuyos</>}
-              </span>
-            </p>
-          )}
-          {!(contador?.correos ?? 0) && mios > 0 && (
-            <p className="hero-contador">
-              <span className="hero-contador-label">Has preparado {fmt(mios)} correos. ¡Gracias!</span>
-            </p>
-          )}
         </div>
 
         <dl className="hero-stats">

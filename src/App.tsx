@@ -4,6 +4,7 @@ import { Hemiciclo } from './components/Hemiciclo';
 import { SeleccionPanel } from './components/SeleccionPanel';
 import { Ficha } from './components/Ficha';
 import { Hero } from './components/Hero';
+import { ContadorBanda } from './components/ContadorBanda';
 import { misCorreos, registrarCorreos } from './lib/contador';
 import type { GrupoInfo } from './lib/grupos';
 
@@ -129,10 +130,10 @@ export default function App() {
     <div className="app">
       <Hero
         diputados={diputados}
-        contador={contador}
-        mios={mios}
         onStart={() => document.querySelector('.hemi-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
       />
+
+      <ContadorBanda contador={contador} mios={mios} />
 
       <section className="callout callout--warning">
         <div className="eyebrow">Qué se vota</div>
