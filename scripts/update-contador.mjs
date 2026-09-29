@@ -17,11 +17,23 @@ const TOKEN = process.env.GOATCOUNTER_TOKEN?.trim();
 const START = '2026-09-29T00:00:00Z'; // campaign launch; the API wants RFC 3339 rounded to the hour
 const PATH_RE = /^\/?correos\/(\d+)(?:\/\d+)?$/;
 
-async function api(path, params) {
+async function api(path, params, tries = 3) {
   const url = `https://${SITE}.goatcounter.com/api/v0/${path}?${new URLSearchParams(params)}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' } });
-  if (!res.ok) throw new Error(`GoatCounter ${res.status}: ${(await res.text()).slice(0, 200)}`);
-  return res.json();
+  for (let i = 1; ; i++) {
+    try {
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(20_000),
+      });
+      if (!res.ok) throw new Error(`GoatCounter ${res.status}: ${(await res.text()).slice(0, 200)}`);
+      return await res.json();
+    } catch (err) {
+      // Network errors hide the reason in `cause` (DNS, reset, timeout…).
+      const detail = err.cause ? `${err.message} (${err.cause.code ?? err.cause.message})` : err.message;
+      if (i >= tries || /GoatCounter 4\d\d/.test(err.message)) throw new Error(`${path} [${params.exclude_paths ? 'página 2+' : 'página 1'}]: ${detail}`);
+      await new Promise((r) => setTimeout(r, 2000 * i));
+    }
+  }
 }
 
 function nextHour() {
