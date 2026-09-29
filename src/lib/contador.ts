@@ -1,8 +1,10 @@
 // "Correos preparados" counter.
 //
 // Each click on a write button sends one anonymous GoatCounter event whose path
-// encodes how many deputies it adds (`correos/20`). A scheduled GitHub Action
-// (scripts/update-contador.mjs) sums count × hits and bakes the total into
+// encodes how many deputies it adds and this browser's event number
+// (`correos/20/3`). GoatCounter counts unique visitors per path, so the event
+// number keeps two emails from the same person from collapsing into one. A scheduled GitHub Action
+// (scripts/update-contador.mjs) sums n × visitors and bakes the total into
 // data/contador.json, so the page itself only ever reads a static file.
 //
 // Each browser counts each deputy once, so repeated clicks don't inflate it.
@@ -10,6 +12,17 @@
 import { GOATCOUNTER_CODE } from '../config';
 
 const KEY = 'dmc-contados';
+const KEY_ENVIOS = 'dmc-envios';
+
+function siguienteEnvio(): number {
+  try {
+    const n = Number(localStorage.getItem(KEY_ENVIOS) ?? '0') + 1;
+    localStorage.setItem(KEY_ENVIOS, String(n));
+    return n;
+  } catch {
+    return 1;
+  }
+}
 
 function leer(): Set<number> {
   try {
@@ -42,7 +55,7 @@ export function registrarCorreos(ids: number[]): number {
   if (GOATCOUNTER_CODE) {
     // No-JS GoatCounter endpoint: a plain image request, no cookies.
     const q = new URLSearchParams({
-      p: `correos/${nuevos.length}`,
+      p: `correos/${nuevos.length}/${siguienteEnvio()}`,
       t: 'Correo preparado',
       e: 'true',
       rnd: Math.random().toString(36).slice(2),
