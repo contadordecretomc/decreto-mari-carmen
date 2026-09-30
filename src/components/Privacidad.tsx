@@ -1,15 +1,5 @@
 import type { Configuracion } from '../config';
 
-// Where the page is being served from, detected at runtime so the same folder
-// can be uploaded to any site without rebuilding.
-function alojamiento(): string {
-  const host = window.location.hostname.replace(/^www\./, '');
-  if (host.endsWith('github.io')) {
-    return 'la web está alojada en GitHub Pages. Como cualquier servidor, puede registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según su propia política de privacidad.';
-  }
-  return `la web está alojada en el servidor de ${host || 'la web que la publica'}, y la cifra del contador se lee de un archivo alojado en GitHub Pages. Ambos, como cualquier servidor, pueden registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según sus propias políticas de privacidad.`;
-}
-
 export function Privacidad({ backHref, config }: { backHref: string; config: Configuracion }) {
   const { correoContacto, organizacion } = config;
   return (
@@ -91,7 +81,9 @@ export function Privacidad({ backHref, config }: { backHref: string; config: Con
         </li>
         <li>
           <strong>Alojamiento:</strong>{' '}
-          {alojamiento()}
+          la web está alojada en el servidor de la página que la publica, y la cifra del contador se lee de un
+          archivo alojado en GitHub Pages. Ambos, como cualquier servidor, pueden registrar datos técnicos de las
+          visitas (por ejemplo, la dirección IP) según sus propias políticas de privacidad.
         </li>
       </ul>
 
