@@ -40,3 +40,6 @@ plugin
 
 # Carpeta de entregables comprimida
 Decreto-Mari-Carmen-entregables.zip
+
+# Paquete para webs hechas con Lovable (npm run lovable)
+lovable

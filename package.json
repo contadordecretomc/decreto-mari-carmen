@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "carpeta": "npm run build && node scripts/preparar-carpeta.mjs",
     "plugin": "npm run build && node scripts/preparar-plugin.mjs",
+    "lovable": "npm run carpeta && node scripts/preparar-lovable.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "scrape": "node scripts/scrape-diputados.mjs",
