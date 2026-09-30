@@ -25,7 +25,7 @@ const DMC_SLUGS_RESERVADOS = array( 'wp-admin', 'wp-content', 'wp-includes', 'wp
  */
 function dmc_ajustes() {
 	$por_defecto = array(
-		'correo'       => 'contadordecretomc@gmail.com',
+		'correo'       => '__CORREO_CONTACTO__', // Filled in from campana.config.json by npm run plugin.
 		'organizacion' => '',
 		'slug'         => DMC_SLUG,
 	);

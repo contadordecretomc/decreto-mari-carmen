@@ -7,7 +7,7 @@
 // (contact email, organisation, address) are edited in the WordPress admin, so
 // configuracion.json is left out.
 
-import { cp, rm, mkdir, writeFile } from 'node:fs/promises';
+import { cp, rm, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,12 +17,17 @@ const NOMBRE = 'decreto-mari-carmen';
 const SALIDA = join(ROOT, 'plugin');
 const DEST = join(SALIDA, NOMBRE);
 const WEB = join(DEST, 'web');
-const CONTADOR_URL = 'https://contadordecretomc.github.io/decreto-mari-carmen/data/contador.json';
+const campana = JSON.parse(await readFile(join(ROOT, 'campana.config.json'), 'utf8'));
+const CONTADOR_URL = `${campana.githubPages}data/contador.json`;
 
 await rm(SALIDA, { recursive: true, force: true });
 await mkdir(SALIDA, { recursive: true });
 await cp(join(ROOT, 'wordpress-plugin'), DEST, { recursive: true });
 await cp(join(ROOT, 'dist'), WEB, { recursive: true });
+
+// Default contact email from campana.config.json (the PHP ships a placeholder).
+const php = join(DEST, 'decreto-mari-carmen.php');
+await writeFile(php, (await readFile(php, 'utf8')).replace('__CORREO_CONTACTO__', campana.correoContacto.replace(/'/g, '')));
 
 // Settings come from the WordPress admin; server config files don't belong here.
 for (const f of ['configuracion.json', '.htaccess']) await rm(join(WEB, f), { force: true });

@@ -9,7 +9,7 @@
 // Address: https://domain/decretomaricarmen/diputadosdecretomaricarmen.html
 // The only file to edit after uploading is configuracion.json.
 
-import { cp, rm, mkdir, rename, writeFile } from 'node:fs/promises';
+import { cp, rm, mkdir, rename, readFile, writeFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,8 @@ const NOMBRE = 'decretomaricarmen';
 const PAGINA = 'diputadosdecretomaricarmen.html';
 const SALIDA = join(ROOT, 'carpeta');
 const DEST = join(SALIDA, NOMBRE);
-const CONTADOR_URL = 'https://contadordecretomc.github.io/decreto-mari-carmen/data/contador.json';
+const campana = JSON.parse(await readFile(join(ROOT, 'campana.config.json'), 'utf8'));
+const CONTADOR_URL = `${campana.githubPages}data/contador.json`;
 
 await rm(SALIDA, { recursive: true, force: true });
 await mkdir(SALIDA, { recursive: true });

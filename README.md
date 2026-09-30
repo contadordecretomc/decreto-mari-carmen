@@ -59,4 +59,4 @@ compilar. La copia de GitHub Pages sigue calculando el contador y la web lo lee 
    (conservando `#d-160`) y sigue sirviendo `data/contador.json` y `compartir.png`.
 
 Si el servidor de destino tiene una política de seguridad de contenidos, debe permitir
-`connect-src https://contadordecretomc.github.io` e `img-src https://contadordecretomc.goatcounter.com`.
+el dominio de GitHub Pages en `connect-src` y el de GoatCounter en `img-src` (ver `campana.config.json`).
