@@ -31,3 +31,6 @@ artifact
 
 # Paquetes generados para compartir
 entregables
+
+# Compilación para la web existente
+dist-externa

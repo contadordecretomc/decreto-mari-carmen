@@ -1,4 +1,12 @@
-import { CONTACTO_EMAIL } from '../config';
+import { CONTACTO_EMAIL, CONTADOR_EXTERNO, ORGANIZACION, SITE_URL } from '../config';
+
+function dominio(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return '';
+  }
+}
 
 export function Privacidad({ backHref }: { backHref: string }) {
   return (
@@ -8,12 +16,14 @@ export function Privacidad({ backHref }: { backHref: string }) {
       </a>
       <h1>Aviso de privacidad y fuentes</h1>
       <p className="legal-lede">
-        Esta web es una campaña ciudadana sin ánimo de lucro para pedir a los diputados y diputadas que voten a favor
-        de convalidar el Decreto Mari Carmen. Aquí se explica qué datos usa, de dónde salen y cómo contactar.
+        {ORGANIZACION ? `Esta web es una campaña de ${ORGANIZACION}` : 'Esta web es una campaña ciudadana sin ánimo de lucro'}{' '}
+        para pedir a los diputados y diputadas que voten a favor de convalidar el Decreto Mari Carmen. Aquí se explica
+        qué datos usa, de dónde salen y cómo contactar.
       </p>
 
-      <h2>Contacto</h2>
+      <h2>{ORGANIZACION ? 'Responsable y contacto' : 'Contacto'}</h2>
       <p>
+        {ORGANIZACION && <>La responsable del tratamiento de los datos es {ORGANIZACION}. </>}
         Para cualquier consulta, o para pedir que se corrija o se retire un dato, escribe a{' '}
         <a href={`mailto:${CONTACTO_EMAIL}`}>{CONTACTO_EMAIL}</a>.
       </p>
@@ -73,12 +83,14 @@ export function Privacidad({ backHref }: { backHref: string }) {
           datos de este sitio en tu navegador.
         </li>
         <li>
-          <strong>Sin cookies ni servicios de terceros para mostrar la web:</strong> las tipografías, las fotos y los
-          datos se sirven desde el propio alojamiento.
+          <strong>Esta página no instala cookies</strong> ni usa servicios de terceros para mostrarse: las tipografías,
+          las fotos y los datos se sirven desde el propio alojamiento.
         </li>
         <li>
-          <strong>Alojamiento:</strong> la web está alojada en GitHub Pages. Como cualquier servidor, puede registrar
-          datos técnicos de las visitas (por ejemplo, la dirección IP) según su propia política de privacidad.
+          <strong>Alojamiento:</strong>{' '}
+          {CONTADOR_EXTERNO
+            ? `la web está alojada en el servidor de ${dominio(SITE_URL) || 'la web que la publica'}, y la cifra del contador se lee de un archivo alojado en GitHub Pages. Ambos, como cualquier servidor, pueden registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según sus propias políticas de privacidad.`
+            : 'la web está alojada en GitHub Pages. Como cualquier servidor, puede registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según su propia política de privacidad.'}
         </li>
       </ul>
 

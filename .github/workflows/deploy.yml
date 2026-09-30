@@ -37,6 +37,12 @@ jobs:
           GOATCOUNTER_SITE: ${{ vars.GOATCOUNTER_SITE }}
           GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
       - run: npm run build
+      # On launch day, set the repo variable REDIRIGIR_A to the new address:
+      # this copy then only redirects there and keeps serving the counter file.
+      - name: Redirigir a la nueva dirección (si está configurada)
+        run: node scripts/redirigir.mjs
+        env:
+          REDIRIGIR_A: ${{ vars.REDIRIGIR_A }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

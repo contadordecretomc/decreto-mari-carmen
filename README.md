@@ -42,3 +42,20 @@ Sin cookies ni datos personales. Cada navegador cuenta a cada diputado una sola 
 La web no consulta nada en directo: `scripts/update-contador.mjs` suma `n × visitantes` y escribe
 `public/data/contador.json`, que la web lee al cargar. En GitHub lo hace
 `.github/workflows/deploy.yml` cada 10 minutos; en un servidor propio, una tarea `cron`.
+
+## Publicar dentro de otra web (p. ej. `https://webdeejemplo.com/decretomaricarmen/`)
+
+La copia de GitHub Pages sigue calculando y publicando el contador; la web alojada fuera lo lee de ahí.
+
+1. Edita `.env.externa`: `VITE_BASE` (carpeta), `VITE_SITE_URL` (dirección pública completa) y, si
+   queréis, `VITE_CONTACTO_EMAIL` y `VITE_ORGANIZACION`. `VITE_CONTADOR_URL` apunta al
+   `contador.json` de GitHub Pages.
+2. `npm run build:externa` → genera `dist-externa/` y guarda dentro la cifra actual del contador como
+   respaldo (si GitHub no responde, la web muestra esa; si tampoco, oculta el contador).
+3. Sube el contenido de `dist-externa/` a la carpeta de la web existente.
+4. El día del lanzamiento, en GitHub → Settings → Secrets and variables → Actions → Variables, crea
+   `REDIRIGIR_A` con la nueva dirección. La copia de GitHub pasa a redirigir allí (conservando
+   `#d-160`) y sigue sirviendo `data/contador.json`.
+
+Si el servidor de destino tiene una política de seguridad de contenidos, debe permitir
+`connect-src https://contadordecretomc.github.io` e `img-src https://contadordecretomc.goatcounter.com`.

@@ -7,6 +7,7 @@ import { Hero } from './components/Hero';
 import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
 import { registrarCorreos } from './lib/contador';
+import { CONTADOR_EXTERNO, CONTADOR_URL, ORGANIZACION } from './config';
 import type { GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
@@ -58,9 +59,14 @@ export default function App() {
 
   useEffect(() => {
     if (contador) return;
-    fetch(import.meta.env.BASE_URL + 'data/contador.json', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then(setContador)
+    // Read the counter from CONTADOR_URL (maybe another site); if that fails,
+    // fall back to the copy uploaded with the page; if both fail, it stays hidden.
+    const leer = (url: string) =>
+      fetch(url, { cache: 'no-store' }).then((r) => (r.ok ? (r.json() as Promise<ContadorData>) : Promise.reject()));
+    const local = import.meta.env.BASE_URL + 'data/contador.json';
+    leer(CONTADOR_EXTERNO ? CONTADOR_URL : import.meta.env.BASE_URL + CONTADOR_URL)
+      .catch(() => (CONTADOR_EXTERNO ? leer(local) : Promise.reject()))
+      .then((c) => setContador(typeof c?.correos === 'number' ? c : null))
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
@@ -221,10 +227,11 @@ export default function App() {
           <a href="https://www.congreso.es/es/busqueda-de-diputados">congreso.es</a> y de sus datos abiertos (XV
           Legislatura)
           {data && <>, consultados el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. Los botones abren tu
-          aplicación de correo con un mensaje que puedes editar antes de enviar. Sin cookies: el contador solo registra,
-          de forma anónima, cuántos diputados incluye cada correo.
+          aplicación de correo con un mensaje que puedes editar antes de enviar. Esta página no instala cookies: el
+          contador solo registra, de forma anónima, cuántos diputados incluye cada correo.
         </p>
         <p>
+          {ORGANIZACION && <>Una iniciativa de {ORGANIZACION} · </>}
           <a href="#privacidad">Aviso de privacidad y fuentes</a>
         </p>
       </footer>

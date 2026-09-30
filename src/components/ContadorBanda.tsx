@@ -28,6 +28,9 @@ export function ContadorBanda({ contador }: { contador: ContadorData | null }) {
   const total = contador?.correos ?? 0;
   const visible = useCuentaAscendente(total);
 
+  // No figure available (source unreachable): hide rather than show a fake 0.
+  if (!contador) return null;
+
   return (
     <section className="cbanda" aria-live="polite">
       <p className="cbanda-pre">La ciudadanía ha preparado</p>

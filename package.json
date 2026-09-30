@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:externa": "tsc -b && vite build --mode externa && node scripts/copiar-contador.mjs",
     "lint": "oxlint",
     "preview": "vite preview",
     "scrape": "node scripts/scrape-diputados.mjs",
