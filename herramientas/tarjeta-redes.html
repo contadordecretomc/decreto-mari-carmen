@@ -4,7 +4,8 @@
 <meta charset="utf-8" />
 <title>Decreto Mari Carmen · Redes</title>
 <!-- Generador de las imágenes para redes. Ábrelo en el navegador con ?f=square (1080×1080),
-     ?f=vertical (1080×1350) o ?f=horizontal (1200×675), y opcionalmente &url=tudominio.org/campana,
+     ?f=vertical (1080×1350) o ?f=horizontal (1200×675), y opcionalmente &url=tudominio.org/campana
+     y &acento=f9ed63 (color de la franja, el botón y el lema en lugar del naranja),
      y haz una captura del tamaño indicado. public/compartir.png es la versión horizontal. -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -73,6 +74,21 @@
   }
   var root = document.documentElement.style;
   root.setProperty('--w', f.w + 'px'); root.setProperty('--h', f.h + 'px');
+  // &acento=f9ed63 swaps the campaign orange for another colour (strip, button
+  // and claim); text on it turns black or white, whichever contrasts more.
+  var acento = (params.get('acento') || '').replace(/[^0-9a-f]/gi, '');
+  if (acento.length === 6) {
+    var lum = [0, 2, 4].map(function (i) {
+      var c = parseInt(acento.slice(i, i + 2), 16) / 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    var L = 0.2126 * lum[0] + 0.7152 * lum[1] + 0.0722 * lum[2];
+    // Contrast against near-black (#14201b, L≈0.013) vs. off-white (#fff6ee, L≈0.93).
+    var tinta = (L + 0.05) / 0.063 >= 0.98 / (L + 0.05) ? '#14201b' : '#fff6ee';
+    root.setProperty('--accent', '#' + acento);
+    root.setProperty('--accent-ink', tinta);
+    root.setProperty('--salmon', '#' + acento);
+  }
   root.setProperty('--u', f.u + 'px'); root.setProperty('--pad', f.pad + 'px'); root.setProperty('--title', f.title);
   if (f.h2) document.getElementById('card').classList.add('h');
 
