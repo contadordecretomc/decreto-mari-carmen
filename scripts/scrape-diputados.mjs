@@ -6,7 +6,7 @@
 // Usage:  npm run scrape
 
 import { writeFile, mkdir, access } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
+import sharp from 'sharp';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { contactoGrupo } from './contactos-grupos.mjs';
@@ -86,25 +86,15 @@ async function exists(p) {
   }
 }
 
+// Official photos come as ~37 KB JPEGs; WebP at quality 70 is ~2 KB each with
+// no visible difference at the size the site shows them (350 photos: ~0.7 MB).
 async function downloadPhoto(remotePath, cod) {
-  const file = `${cod}.jpg`;
+  const file = `${cod}.webp`;
   const dest = join(FOTOS_DIR, file);
   if (!FORCE_PHOTOS && (await exists(dest))) return `fotos/${file}`;
   const res = await fetchWithRetry(BASE + remotePath);
-  await writeFile(dest, Buffer.from(await res.arrayBuffer()));
-  comprimirFoto(dest);
+  await sharp(Buffer.from(await res.arrayBuffer())).webp({ quality: 70 }).toFile(dest);
   return `fotos/${file}`;
-}
-
-// Official photos come at ~37 KB each; JPEG quality 60 brings them to ~11 KB
-// with no visible difference at the size the site shows them. Uses macOS sips
-// when available; elsewhere the original file is kept.
-function comprimirFoto(ruta) {
-  try {
-    execFileSync('sips', ['-s', 'format', 'jpeg', '-s', 'formatOptions', '60', ruta, '--out', ruta], { stdio: 'ignore' });
-  } catch {
-    // sips not available: keep the original.
-  }
 }
 
 async function mapPool(items, n, fn) {
