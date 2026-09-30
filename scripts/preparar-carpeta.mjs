@@ -42,6 +42,9 @@ await writeFile(
    (por ejemplo public_html/), por FTP o desde el panel del alojamiento.
    Quedará en https://tudominio/${NOMBRE}/  (funciona con y sin barra final).
    Si quieres otra dirección, basta con cambiarle el nombre a la carpeta.
+   En WordPress: va al lado de wp-admin, wp-content y wp-config.php.
+   La carpeta lleva un archivo oculto, .htaccess: asegúrate de subirlo también
+   (lo más fácil es subir el .zip y descomprimirlo desde el panel del alojamiento).
 
 2. Edita configuracion.json con cualquier editor de texto:
    - correoContacto: correo para consultas y solicitudes de datos.

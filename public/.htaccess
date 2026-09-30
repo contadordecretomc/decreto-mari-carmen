@@ -1,0 +1,15 @@
+# Solo afecta a esta carpeta; no toca la configuración de WordPress.
+# Si el servidor devolviera un error 500 por este archivo, se puede borrar:
+# la web sigue funcionando en la mayoría de alojamientos.
+
+# Sirve index.html como página de la carpeta aunque el servidor
+# esté configurado para buscar solo index.php.
+DirectoryIndex index.html
+
+# Que los cambios en configuracion.json y el contador de respaldo
+# se vean al momento (sin quedarse en caché).
+<IfModule mod_headers.c>
+  <FilesMatch "^(configuracion|contador)\.json$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
