@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>Decreto Mari Carmen · Redes (versión amarilla)</title>
+<!-- Variante amarilla de las imágenes para redes (fondo amarillo, texto negro, botones
+     negros redondeados). Ábrela con ?f=square (1080×1080), ?f=vertical (1080×1350) o
+     ?f=horizontal (1200×675), y opcionalmente &url=tudominio.org/campana y
+     &fondo=f9ed63 (color de fondo). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@700;800;900&family=Outfit:wght@500;600;700&display=swap" />
+<style>
+  :root { --fondo: #f9ed63; --negro: #111111; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: var(--fondo); }
+  body { width: var(--w); height: var(--h); overflow: hidden; }
+  .card { position: relative; width: var(--w); height: var(--h); background: var(--fondo); color: var(--negro); overflow: hidden; display: flex; flex-direction: column; }
+
+  .franja { background: var(--negro); color: var(--fondo); font: 800 calc(var(--u) * 1.75) 'Barlow Semi Condensed', sans-serif; letter-spacing: 0.08em; text-transform: uppercase; padding: calc(var(--u) * 1.4) var(--pad); display: flex; gap: calc(var(--u) * 2); white-space: nowrap; }
+  .franja span + span::before { content: '•'; margin-right: calc(var(--u) * 2); }
+
+  .body { flex: 1; display: flex; flex-direction: column; padding: calc(var(--u) * 4.6) var(--pad) calc(var(--u) * 4); min-height: 0; }
+  .claim { font: 800 calc(var(--u) * 3.3) 'Barlow Semi Condensed', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
+  h1 { font: 900 calc(var(--u) * var(--title)) / 1.06 'Barlow Semi Condensed', sans-serif; text-transform: uppercase; letter-spacing: -0.005em; margin-top: calc(var(--u) * 1.6); }
+  h1 em { font-style: normal; background: var(--negro); color: var(--fondo); padding: 0 0.14em; border-radius: calc(var(--u) * 0.8); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+  .hemi { flex: 1; min-height: 0; display: flex; align-items: flex-end; justify-content: center; margin-top: calc(var(--u) * 2.5); }
+  .hemi svg { height: 100%; max-width: 100%; }
+
+  .pie { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 2); margin-top: calc(var(--u) * 3); }
+  .cta { font: 700 calc(var(--u) * 2.35) 'Outfit', sans-serif; background: var(--negro); color: var(--fondo); border-radius: calc(var(--u) * 1); padding: calc(var(--u) * 1.3) calc(var(--u) * 2.4); white-space: nowrap; }
+  .url { font: 700 calc(var(--u) * 2.9) 'Outfit', sans-serif; text-align: right; letter-spacing: -0.01em; white-space: nowrap; }
+
+  .h .body { display: grid; grid-template-columns: 1.2fr 0.8fr; grid-template-rows: auto 1fr auto; column-gap: calc(var(--u) * 3); }
+  .h .claim { grid-column: 1; grid-row: 1; }
+  .h h1 { grid-column: 1; grid-row: 2; align-self: center; margin-top: 0; }
+  .h .hemi { grid-column: 2; grid-row: 1 / 3; margin-top: 0; align-items: center; }
+  .h .hemi svg { width: 100%; height: auto; }
+  .h .pie { grid-column: 1 / 3; grid-row: 3; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="franja"><span>Pleno extraordinario</span><span>Viernes 2 de octubre · 11:00</span><span>Congreso</span></div>
+  <div class="body">
+    <p class="claim">350 caras. Una votación.</p>
+    <h1>Que no dejen caer el <em>Decreto Mari Carmen</em></h1>
+    <div class="hemi"><svg viewBox="0 0 400 206" aria-hidden="true"><g id="seats"></g></svg></div>
+    <div class="pie">
+      <span class="cta">Escribe a tus diputados</span>
+      <span class="url" id="url"></span>
+    </div>
+  </div>
+</div>
+<script>
+  var formatos = {
+    square:     { w: 1080, h: 1080, u: 10.8, pad: 76, title: 11.6 },
+    vertical:   { w: 1080, h: 1350, u: 10.8, pad: 76, title: 12.4 },
+    horizontal: { w: 1200, h: 675,  u: 8.4,  pad: 60, title: 9.2, h2: true },
+  };
+  var params = new URLSearchParams(location.search);
+  var f = formatos[params.get('f')] || formatos.square;
+  var root = document.documentElement.style;
+  root.setProperty('--w', f.w + 'px'); root.setProperty('--h', f.h + 'px');
+  root.setProperty('--u', f.u + 'px'); root.setProperty('--pad', f.pad + 'px'); root.setProperty('--title', f.title);
+  if (f.h2) document.getElementById('card').classList.add('h');
+  var fondo = (params.get('fondo') || '').replace(/[^0-9a-f]/gi, '');
+  if (fondo.length === 6) root.setProperty('--fondo', '#' + fondo);
+  var url = (params.get('url') || '').trim(), hueco = document.getElementById('url');
+  if (url) hueco.textContent = url; else hueco.remove();
+
+  // Same parliament-arch layout as the website, all seats in black.
+  var total = 350, rows = 12, inner = 0.38, R = 190, cx = 200, cy = 198, radii = [], sum = 0, i, j;
+  for (i = 0; i < rows; i++) { radii.push(inner + (1 - inner) * i / (rows - 1)); sum += radii[i]; }
+  var counts = radii.map(function (r) { return Math.floor(total * r / sum); });
+  var left = total - counts.reduce(function (a, b) { return a + b; }, 0);
+  for (i = rows - 1; left > 0; i = (i - 1 + rows) % rows, left--) counts[i]++;
+  var html = '', sr = (R * (1 - inner) / (rows - 1)) * 0.42;
+  radii.forEach(function (r, k) { var n = counts[k]; for (j = 0; j < n; j++) { var a = Math.PI * (1 - j / (n - 1)); html += '<circle cx="' + (cx + R * r * Math.cos(a)).toFixed(1) + '" cy="' + (cy - R * r * Math.sin(a)).toFixed(1) + '" r="' + sr.toFixed(2) + '" fill="#111111"/>'; } });
+  document.getElementById('seats').innerHTML = html;
+</script>
+</body>
+</html>
