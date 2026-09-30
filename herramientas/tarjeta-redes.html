@@ -29,7 +29,7 @@
 
   .pie { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 2); margin-top: calc(var(--u) * 3); padding-top: calc(var(--u) * 2.2); border-top: 2px solid rgba(242,244,239,0.28); }
   .cta { font: 700 calc(var(--u) * 2.25) 'IBM Plex Sans', sans-serif; background: var(--accent); color: var(--accent-ink); border: 2px solid var(--paper); box-shadow: calc(var(--u) * 0.5) calc(var(--u) * 0.5) 0 var(--paper); padding: calc(var(--u) * 1.1) calc(var(--u) * 1.8); white-space: nowrap; }
-  .url { font: 500 calc(var(--u) * 1.6) 'IBM Plex Mono', monospace; color: rgba(242,244,239,0.8); text-align: right; line-height: 1.35; }
+  .url { font: 600 calc(var(--u) * 2.7) 'IBM Plex Mono', monospace; color: var(--paper); text-align: right; line-height: 1.2; letter-spacing: -0.01em; white-space: nowrap; }
 
   /* Horizontal: text left, hemicycle right. */
   .h .body { display: grid; grid-template-columns: 1.15fr 0.85fr; grid-template-rows: auto 1fr auto; column-gap: calc(var(--u) * 3); }
@@ -67,10 +67,7 @@
   var url = (params.get('url') || '').trim();
   var huecoUrl = document.getElementById('url');
   if (url) {
-    var corte = url.indexOf('/');
-    huecoUrl.innerHTML = '';
-    huecoUrl.appendChild(document.createTextNode(corte > 0 ? url.slice(0, corte) : url));
-    if (corte > 0) { huecoUrl.appendChild(document.createElement('br')); huecoUrl.appendChild(document.createTextNode(url.slice(corte))); }
+    huecoUrl.textContent = url;
   } else {
     huecoUrl.remove();
   }
