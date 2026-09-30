@@ -8,6 +8,7 @@ import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
 import { registrarCorreos } from './lib/contador';
 import { CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
+import { BASE, CONFIG_INYECTADA } from './lib/base';
 import type { GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
@@ -51,7 +52,7 @@ export default function App() {
 
   useEffect(() => {
     if (data) return;
-    fetch(import.meta.env.BASE_URL + 'data/diputados.json')
+    fetch(BASE + 'data/diputados.json')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then(setData)
       .catch((e: Error) => setError(e.message));
@@ -65,22 +66,30 @@ export default function App() {
     const leer = (url: string) =>
       fetch(url, { cache: 'no-store' }).then((r) => (r.ok ? (r.json() as Promise<ContadorData>) : Promise.reject()));
     leer(CONTADOR_URL)
-      .catch(() => leer(import.meta.env.BASE_URL + 'data/contador.json'))
+      .catch(() => leer(BASE + 'data/contador.json'))
       .then((c) => setContador(typeof c?.correos === 'number' ? c : null))
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
 
-  // Contact email and organisation: editable in configuracion.json after upload.
+  // Contact email and organisation: from the WordPress plugin settings when the
+  // page runs inside it; otherwise from configuracion.json (editable after upload).
   useEffect(() => {
-    fetch(import.meta.env.BASE_URL + 'configuracion.json', { cache: 'no-store' })
+    const aplicar = (c: Partial<Configuracion>) =>
+      setConfig({
+        correoContacto:
+          typeof c.correoContacto === 'string' && c.correoContacto.includes('@')
+            ? c.correoContacto.trim()
+            : CONFIG_POR_DEFECTO.correoContacto,
+        organizacion: typeof c.organizacion === 'string' ? c.organizacion.trim() : '',
+      });
+    if (CONFIG_INYECTADA) {
+      aplicar(CONFIG_INYECTADA);
+      return;
+    }
+    fetch(BASE + 'configuracion.json', { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((c: Partial<Configuracion>) =>
-        setConfig({
-          correoContacto: typeof c.correoContacto === 'string' && c.correoContacto.includes('@') ? c.correoContacto.trim() : CONFIG_POR_DEFECTO.correoContacto,
-          organizacion: typeof c.organizacion === 'string' ? c.organizacion.trim() : '',
-        })
-      )
+      .then(aplicar)
       .catch(() => {});
   }, []);
 

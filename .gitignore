@@ -34,3 +34,6 @@ entregables
 
 # Carpeta lista para subir a otra web (npm run carpeta)
 carpeta
+
+# Plugin de WordPress empaquetado (npm run plugin)
+plugin
