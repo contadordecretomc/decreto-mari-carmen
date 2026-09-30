@@ -38,7 +38,10 @@ async function main() {
   const cssPath = html.match(/<link rel="stylesheet"[^>]*href="\.\/([^"]+)"/)[1];
   const js = await readFile(join(DIST, jsPath), 'utf8');
   const css = await readFile(join(DIST, cssPath), 'utf8');
-  const fonts = html.match(/<link\s+rel="stylesheet"\s+href="(https:\/\/fonts\.googleapis\.com[^"]+)"/)[1];
+  // The public site bundles its fonts; the artifact viewer can't load those
+  // files, so this preview-only build pulls the same families from Google Fonts.
+  const fonts =
+    'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap';
 
   const data = JSON.parse(await readFile(join(ROOT, 'public/data/diputados.json'), 'utf8'));
   const tmp = await mkdtemp(join(tmpdir(), 'dmc-'));
@@ -57,7 +60,7 @@ async function main() {
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="${fonts}" />
-<style>${css}</style>
+<style>${css.replace(/@font-face\{[^}]*\}/g, '')}</style>
 <div id="root"></div>
 <script type="application/json" id="diputados-data">${json}</script>
 <script type="application/json" id="contador-data">${contador}</script>

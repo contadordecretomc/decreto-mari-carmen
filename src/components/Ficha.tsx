@@ -62,6 +62,7 @@ export function Ficha({ d, backHref, onPreparar }: Props) {
             <a className="dip-cta" href={mailtoHref(m)} onClick={() => onPreparar([d.id])}>
               {cta}
             </a>
+            <p className="dip-respeto">Escribe con respeto: el objetivo es convencer.</p>
             <div className="copy-row">
               <CopyButton text={m.to} label="Copiar dirección" />
               <CopyButton

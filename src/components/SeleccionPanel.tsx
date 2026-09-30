@@ -57,6 +57,7 @@ export function SeleccionPanel({ titulo, ctaTodos, color, diputados, seleccion, 
           <CopyButton text={m.cc.join(', ')} label="Copiar direcciones" />
           <CopyButton text={`${m.subject}\n\n${m.body}`} label="Copiar mensaje" onCopy={preparar} />
         </div>
+        <p className="dip-respeto">Escribe con respeto: el objetivo es convencer.</p>
         <p className="dip-note">
           Abre tu aplicación de correo con {m.cc.length} {m.cc.length === 1 ? 'dirección' : 'direcciones'} en copia (CC).
           {viaGrupo.length > 0 &&

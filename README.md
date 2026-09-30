@@ -1,49 +1,44 @@
 # Decreto Mari Carmen
 
-Web estática con las caras de los 350 diputados y diputadas del Congreso y un botón por cada uno:
-**«Pídele a X que vote el Decreto Mari Carmen este viernes»**, que abre un correo ya redactado
-dirigido a su dirección pública.
+Web estática de campaña para pedir a los 350 diputados y diputadas del Congreso que voten a favor
+de convalidar el «Decreto Mari Carmen». Muestra el hemiciclo por grupos, deja escribir a un grupo
+entero (con todos en CC) o a cada diputado desde su ficha, y enseña un contador común de correos
+preparados.
 
+La guía completa (funcionamiento, instalación, GoatCounter, GitHub Pages y dominio propio) está en
+`DOCUMENTACION.pdf`, que acompaña al paquete.
 
-## Datos
-
-`npm run scrape` descarga de congreso.es:
-
-1. La lista de diputados en activo de la XV Legislatura (endpoint de búsqueda de diputados).
-2. La ficha pública de cada uno, de donde se extrae el correo (`@congreso.es`).
-3. Su foto oficial, guardada en `public/fotos/<id>.jpg`.
-
-Resultado: `public/data/diputados.json`. No se infieren direcciones.
-
-31 diputados no publican correo en su ficha (en ninguna legislatura). Para ellos, `contactoGrupo`
-guarda la dirección general de su grupo parlamentario o su partido, verificada a mano en la web de
-cada uno ([scripts/contactos-grupos.mjs](scripts/contactos-grupos.mjs)). El correo va con
-«A la atención de…» y el nombre en el asunto.
-
-Añade `--force-photos` para volver a descargar las fotos.
-
-## Desarrollo
+## Arranque rápido
 
 ```bash
 npm install
-npm run dev      # http://localhost:5902
-npm run build    # genera dist/, desplegable en cualquier hosting estático
+npm run dev        # http://localhost:5902
+npm run build      # genera dist/, desplegable en cualquier hosting estático
 ```
+
+## Scripts
+
+| Comando | Qué hace |
+| --- | --- |
+| `npm run dev` | Servidor local de desarrollo. |
+| `npm run build` | Compila la web en `dist/`. |
+| `npm run scrape` | Vuelve a descargar diputados, correos y fotos de congreso.es. |
+| `npm run contador` | Recalcula `public/data/contador.json` desde GoatCounter (necesita `GOATCOUNTER_SITE` y `GOATCOUNTER_TOKEN`). |
+| `npm run artifact` | Genera un único HTML autocontenido en `artifact/` (opcional). |
+
+## Datos
+
+`npm run scrape` descarga de congreso.es la lista de diputados en activo, la ficha pública de cada
+uno (correo `@congreso.es`), su foto oficial y su biografía de los datos abiertos. No se infieren
+direcciones: quien no publica correo recibe el mensaje en la dirección general de su grupo o
+partido ([scripts/contactos-grupos.mjs](scripts/contactos-grupos.mjs)), con su nombre en el asunto.
 
 ## Contador de correos preparados
 
 Cada clic en un botón de escribir (o «Copiar mensaje») envía a GoatCounter un evento anónimo
-`correos/<n>`, con `n` = diputados nuevos para ese navegador (cada navegador cuenta a cada diputado
-una vez). No hay cookies ni datos personales.
+`correos/<n>/<k>`: `n` = diputados nuevos para ese navegador, `k` = número de envío del navegador.
+Sin cookies ni datos personales. Cada navegador cuenta a cada diputado una sola vez.
 
-La web no consulta nada en directo: `.github/workflows/deploy.yml` se ejecuta cada 10 minutos,
-suma `n × visitas` con `scripts/update-contador.mjs`, escribe `public/data/contador.json` y
-publica en GitHub Pages.
-
-Configuración:
-
-1. `src/config.ts` → `GOATCOUNTER_CODE` con el código del sitio de GoatCounter.
-2. En GitHub → Settings → Secrets and variables → Actions:
-   - Variable `GOATCOUNTER_SITE` = el mismo código.
-   - Secret `GOATCOUNTER_TOKEN` = API key de GoatCounter con permiso «Read statistics».
-3. Settings → Pages → Source: **GitHub Actions**.
+La web no consulta nada en directo: `scripts/update-contador.mjs` suma `n × visitantes` y escribe
+`public/data/contador.json`, que la web lee al cargar. En GitHub lo hace
+`.github/workflows/deploy.yml` cada 10 minutos; en un servidor propio, una tarea `cron`.

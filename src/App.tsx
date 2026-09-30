@@ -4,6 +4,7 @@ import { Hemiciclo } from './components/Hemiciclo';
 import { SeleccionPanel } from './components/SeleccionPanel';
 import { Ficha } from './components/Ficha';
 import { Hero } from './components/Hero';
+import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
 import { registrarCorreos } from './lib/contador';
 import type { GrupoInfo } from './lib/grupos';
@@ -106,10 +107,23 @@ export default function App() {
   const fichaId = Number(/^#d-(\d+)$/.exec(hash)?.[1]);
   const ficha = fichaId ? diputados.find((d) => d.id === fichaId) : undefined;
 
+  const privacidad = hash === '#privacidad';
+
   useEffect(() => {
-    if (ficha) window.scrollTo(0, 0);
+    if (ficha || privacidad) window.scrollTo(0, 0);
     else if (hash === `#${PANEL_ID}`) panelRef.current?.scrollIntoView({ block: 'start' });
-  }, [ficha, hash]);
+  }, [ficha, privacidad, hash]);
+
+  if (privacidad) {
+    return (
+      <div className="app">
+        <p className="site-mark">
+          <a href="#">Decreto Mari Carmen</a>
+        </p>
+        <Privacidad backHref="#" />
+      </div>
+    );
+  }
 
   if (ficha) {
     return (
@@ -207,9 +221,11 @@ export default function App() {
           <a href="https://www.congreso.es/es/busqueda-de-diputados">congreso.es</a> y de sus datos abiertos (XV
           Legislatura)
           {data && <>, consultados el {new Date(data.actualizado).toLocaleDateString('es-ES')}</>}. Los botones abren tu
-          aplicación de correo con un mensaje que puedes editar antes de enviar. A quien no publica correo en su ficha se
-          le escribe a la dirección general de su grupo parlamentario o su partido. Para el contador de correos preparados se
-          registra, sin cookies ni datos personales, cuántos diputados incluye cada correo (con GoatCounter).
+          aplicación de correo con un mensaje que puedes editar antes de enviar. Sin cookies: el contador solo registra,
+          de forma anónima, cuántos diputados incluye cada correo.
+        </p>
+        <p>
+          <a href="#privacidad">Aviso de privacidad y fuentes</a>
         </p>
       </footer>
     </div>

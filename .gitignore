@@ -28,3 +28,6 @@ artifact
 
 # Local tooling
 .claude
+
+# Paquetes generados para compartir
+entregables

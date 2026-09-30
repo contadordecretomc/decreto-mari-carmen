@@ -131,7 +131,7 @@ a {
 }
 
 .hero-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: clamp(2.5rem, 7.5vw, 5.4rem);
   line-height: 0.95;
@@ -172,7 +172,7 @@ a {
 }
 
 .cbanda-pre {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: clamp(1.2rem, 3vw, 1.7rem);
   margin: 0;
@@ -189,7 +189,7 @@ a {
 }
 
 .cbanda-post {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: clamp(1.15rem, 2.8vw, 1.6rem);
   line-height: 1.25;
@@ -539,7 +539,7 @@ a {
 }
 
 .hemi-total {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-size: 64px;
   font-weight: 600;
   fill: var(--ink);
@@ -569,7 +569,7 @@ a {
 }
 
 .hemi-tip strong {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 600;
 }
 
@@ -696,7 +696,7 @@ a {
 }
 
 .panel-title {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 600;
   font-size: clamp(1.25rem, 3vw, 1.6rem);
   line-height: 1.1;
@@ -923,9 +923,56 @@ a {
   margin: 0;
 }
 
+/* Tone reminder next to every write button */
+.dip-respeto {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Privacy notice */
+.legal {
+  max-width: 720px;
+  animation: panel-in 0.3s ease-out both;
+}
+
+.legal h1 {
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  line-height: 1.08;
+  margin: 18px 0 12px;
+  text-wrap: balance;
+}
+
+.legal h2 {
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 26px 0 8px;
+}
+
+.legal p,
+.legal li {
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.legal ul {
+  padding-left: 20px;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.legal-lede {
+  color: var(--ink-soft);
+  font-size: 1rem !important;
+}
+
 /* Deputy page */
 .site-mark {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 600;
   font-size: 1.1rem;
   margin: 0 0 18px;
@@ -987,7 +1034,7 @@ a {
 }
 
 .ficha-id h1 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 600;
   font-size: clamp(1.7rem, 5vw, 2.5rem);
   line-height: 1.05;
@@ -1058,7 +1105,7 @@ a {
 }
 
 .ficha-bio h2 {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
   font-weight: 600;
   font-size: 1.3rem;
   margin: 0 0 8px;
@@ -1115,6 +1162,10 @@ a {
   .dip-cta {
     transition: none;
   }
+}
+
+.app-footer p {
+  margin: 0 0 8px;
 }
 
 .app-footer {
