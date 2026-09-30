@@ -7,7 +7,7 @@ import { Hero } from './components/Hero';
 import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
 import { registrarCorreos } from './lib/contador';
-import { CONTADOR_EXTERNO, CONTADOR_URL, ORGANIZACION } from './config';
+import { CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
 import type { GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
@@ -42,6 +42,7 @@ export default function App() {
   const [data, setData] = useState<DiputadosData | null>(readEmbeddedData);
   const [error, setError] = useState<string | null>(null);
   const [contador, setContador] = useState<ContadorData | null>(readEmbeddedContador);
+  const [config, setConfig] = useState<Configuracion>(CONFIG_POR_DEFECTO);
   const [grupoSel, setGrupoSel] = useState<GrupoInfo | null>(null);
   const [query, setQuery] = useState('');
   const [seleccion, setSeleccion] = useState<Set<number>>(new Set());
@@ -59,16 +60,28 @@ export default function App() {
 
   useEffect(() => {
     if (contador) return;
-    // Read the counter from CONTADOR_URL (maybe another site); if that fails,
-    // fall back to the copy uploaded with the page; if both fail, it stays hidden.
+    // Read the counter from the GitHub Pages copy; if that fails, fall back to
+    // the copy uploaded with the page; if both fail, the counter stays hidden.
     const leer = (url: string) =>
       fetch(url, { cache: 'no-store' }).then((r) => (r.ok ? (r.json() as Promise<ContadorData>) : Promise.reject()));
-    const local = import.meta.env.BASE_URL + 'data/contador.json';
-    leer(CONTADOR_EXTERNO ? CONTADOR_URL : import.meta.env.BASE_URL + CONTADOR_URL)
-      .catch(() => (CONTADOR_EXTERNO ? leer(local) : Promise.reject()))
+    leer(CONTADOR_URL)
+      .catch(() => leer(import.meta.env.BASE_URL + 'data/contador.json'))
       .then((c) => setContador(typeof c?.correos === 'number' ? c : null))
       .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
+  }, []);
+
+  // Contact email and organisation: editable in configuracion.json after upload.
+  useEffect(() => {
+    fetch(import.meta.env.BASE_URL + 'configuracion.json', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((c: Partial<Configuracion>) =>
+        setConfig({
+          correoContacto: typeof c.correoContacto === 'string' && c.correoContacto.includes('@') ? c.correoContacto.trim() : CONFIG_POR_DEFECTO.correoContacto,
+          organizacion: typeof c.organizacion === 'string' ? c.organizacion.trim() : '',
+        })
+      )
+      .catch(() => {});
   }, []);
 
   function preparar(ids: number[]) {
@@ -126,7 +139,7 @@ export default function App() {
         <p className="site-mark">
           <a href="#">Decreto Mari Carmen</a>
         </p>
-        <Privacidad backHref="#" />
+        <Privacidad backHref="#" config={config} />
       </div>
     );
   }
@@ -231,7 +244,7 @@ export default function App() {
           contador solo registra, de forma anónima, cuántos diputados incluye cada correo.
         </p>
         <p>
-          {ORGANIZACION && <>Una iniciativa de {ORGANIZACION} · </>}
+          {config.organizacion && <>Una iniciativa de {config.organizacion} · </>}
           <a href="#privacidad">Aviso de privacidad y fuentes</a>
         </p>
       </footer>

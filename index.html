@@ -2,12 +2,34 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <!-- The site uses relative paths so the folder works anywhere; opened
+         without the trailing slash (…/decretomaricarmen) those paths would
+         point one level up, so add the slash before anything else loads. -->
+    <script>
+      (function () {
+        var p = location.pathname, last = p.slice(p.lastIndexOf('/') + 1);
+        if (last && last.indexOf('.') === -1) location.replace(p + '/' + location.search + location.hash);
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
       content="Escribe a tu diputado o diputada: que vote a favor de convalidar el Decreto Mari Carmen este viernes en el Congreso."
     />
+    <!-- Link previews. The image is served from the GitHub Pages copy, which
+         stays published, so these tags work whatever domain hosts the folder. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Que no dejen caer el Decreto Mari Carmen" />
+    <meta property="og:description" content="350 caras. Una votación. Escribe a tus diputados para que voten a favor de convalidar el Decreto Mari Carmen." />
+    <meta property="og:image" content="https://contadordecretomc.github.io/decreto-mari-carmen/compartir.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="675" />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Que no dejen caer el Decreto Mari Carmen" />
+    <meta name="twitter:description" content="350 caras. Una votación. Escribe a tus diputados para que voten a favor de convalidar el Decreto Mari Carmen." />
+    <meta name="twitter:image" content="https://contadordecretomc.github.io/decreto-mari-carmen/compartir.png" />
     <title>Decreto Mari Carmen</title>
   </head>
   <body>

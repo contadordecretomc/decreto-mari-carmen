@@ -1,14 +1,17 @@
-import { CONTACTO_EMAIL, CONTADOR_EXTERNO, ORGANIZACION, SITE_URL } from '../config';
+import type { Configuracion } from '../config';
 
-function dominio(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return '';
+// Where the page is being served from, detected at runtime so the same folder
+// can be uploaded to any site without rebuilding.
+function alojamiento(): string {
+  const host = window.location.hostname.replace(/^www\./, '');
+  if (host.endsWith('github.io')) {
+    return 'la web está alojada en GitHub Pages. Como cualquier servidor, puede registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según su propia política de privacidad.';
   }
+  return `la web está alojada en el servidor de ${host || 'la web que la publica'}, y la cifra del contador se lee de un archivo alojado en GitHub Pages. Ambos, como cualquier servidor, pueden registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según sus propias políticas de privacidad.`;
 }
 
-export function Privacidad({ backHref }: { backHref: string }) {
+export function Privacidad({ backHref, config }: { backHref: string; config: Configuracion }) {
+  const { correoContacto, organizacion } = config;
   return (
     <article className="legal">
       <a href={backHref} className="back-link">
@@ -16,16 +19,16 @@ export function Privacidad({ backHref }: { backHref: string }) {
       </a>
       <h1>Aviso de privacidad y fuentes</h1>
       <p className="legal-lede">
-        {ORGANIZACION ? `Esta web es una campaña de ${ORGANIZACION}` : 'Esta web es una campaña ciudadana sin ánimo de lucro'}{' '}
+        {organizacion ? `Esta web es una campaña de ${organizacion}` : 'Esta web es una campaña ciudadana sin ánimo de lucro'}{' '}
         para pedir a los diputados y diputadas que voten a favor de convalidar el Decreto Mari Carmen. Aquí se explica
         qué datos usa, de dónde salen y cómo contactar.
       </p>
 
-      <h2>{ORGANIZACION ? 'Responsable y contacto' : 'Contacto'}</h2>
+      <h2>{organizacion ? 'Responsable y contacto' : 'Contacto'}</h2>
       <p>
-        {ORGANIZACION && <>La responsable del tratamiento de los datos es {ORGANIZACION}. </>}
+        {organizacion && <>La responsable del tratamiento de los datos es {organizacion}. </>}
         Para cualquier consulta, o para pedir que se corrija o se retire un dato, escribe a{' '}
-        <a href={`mailto:${CONTACTO_EMAIL}`}>{CONTACTO_EMAIL}</a>.
+        <a href={`mailto:${correoContacto}`}>{correoContacto}</a>.
       </p>
 
       <h2>Datos de los diputados y diputadas</h2>
@@ -88,9 +91,7 @@ export function Privacidad({ backHref }: { backHref: string }) {
         </li>
         <li>
           <strong>Alojamiento:</strong>{' '}
-          {CONTADOR_EXTERNO
-            ? `la web está alojada en el servidor de ${dominio(SITE_URL) || 'la web que la publica'}, y la cifra del contador se lee de un archivo alojado en GitHub Pages. Ambos, como cualquier servidor, pueden registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según sus propias políticas de privacidad.`
-            : 'la web está alojada en GitHub Pages. Como cualquier servidor, puede registrar datos técnicos de las visitas (por ejemplo, la dirección IP) según su propia política de privacidad.'}
+          {alojamiento()}
         </li>
       </ul>
 

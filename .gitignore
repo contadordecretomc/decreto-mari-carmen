@@ -32,5 +32,5 @@ artifact
 # Paquetes generados para compartir
 entregables
 
-# Compilación para la web existente
-dist-externa
+# Carpeta lista para subir a otra web (npm run carpeta)
+carpeta

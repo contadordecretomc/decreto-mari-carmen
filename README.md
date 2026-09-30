@@ -45,17 +45,18 @@ La web no consulta nada en directo: `scripts/update-contador.mjs` suma `n × vis
 
 ## Publicar dentro de otra web (p. ej. `https://webdeejemplo.com/decretomaricarmen/`)
 
-La copia de GitHub Pages sigue calculando y publicando el contador; la web alojada fuera lo lee de ahí.
+La web compilada es una carpeta autónoma: funciona en cualquier dominio y subcarpeta sin volver a
+compilar. La copia de GitHub Pages sigue calculando el contador y la web lo lee de ahí.
 
-1. Edita `.env.externa`: `VITE_BASE` (carpeta), `VITE_SITE_URL` (dirección pública completa) y, si
-   queréis, `VITE_CONTACTO_EMAIL` y `VITE_ORGANIZACION`. `VITE_CONTADOR_URL` apunta al
-   `contador.json` de GitHub Pages.
-2. `npm run build:externa` → genera `dist-externa/` y guarda dentro la cifra actual del contador como
-   respaldo (si GitHub no responde, la web muestra esa; si tampoco, oculta el contador).
-3. Sube el contenido de `dist-externa/` a la carpeta de la web existente.
-4. El día del lanzamiento, en GitHub → Settings → Secrets and variables → Actions → Variables, crea
-   `REDIRIGIR_A` con la nueva dirección. La copia de GitHub pasa a redirigir allí (conservando
-   `#d-160`) y sigue sirviendo `data/contador.json`.
+1. `npm run carpeta` → genera `carpeta/decretomaricarmen/` (y su `.zip`), con la cifra actual del
+   contador como copia de respaldo y un `LEEME.txt`.
+2. Sube esa carpeta tal cual a la carpeta pública de la otra web. Funciona con y sin barra final, y
+   con cualquier nombre de carpeta.
+3. Edita `configuracion.json` dentro de la carpeta subida: `correoContacto` y `organizacion`. Es el
+   único archivo que hay que tocar.
+4. Opcional, el día del lanzamiento: en GitHub → Settings → Secrets and variables → Actions →
+   Variables, crea `REDIRIGIR_A` con la nueva dirección. La copia de GitHub pasa a redirigir allí
+   (conservando `#d-160`) y sigue sirviendo `data/contador.json` y `compartir.png`.
 
 Si el servidor de destino tiene una política de seguridad de contenidos, debe permitir
 `connect-src https://contadordecretomc.github.io` e `img-src https://contadordecretomc.goatcounter.com`.
