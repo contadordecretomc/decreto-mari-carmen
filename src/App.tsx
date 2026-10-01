@@ -10,7 +10,7 @@ import { AltaBanda } from './components/AltaBanda';
 import { registrarCorreos } from './lib/contador';
 import { CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
 import { BASE, CONFIG_INYECTADA } from './lib/base';
-import type { GrupoInfo } from './lib/grupos';
+import { GRUPOS, type GrupoInfo } from './lib/grupos';
 
 function normalize(s: string) {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -201,6 +201,24 @@ export default function App() {
         )}
         {data && (
           <>
+            <section className="alerta-clave" role="alert" aria-labelledby="alerta-clave-titulo">
+              <div className="alerta-clave-eyebrow">Alerta</div>
+              <h2 id="alerta-clave-titulo" className="alerta-clave-titulo">
+                Los votos del PNV y de Junts son clave
+              </h2>
+              <p>
+                El resultado del viernes depende de ellos. Si votan en contra, los decretos decaen. Escríbeles ahora:
+              </p>
+              <div className="alerta-clave-botones">
+                {GRUPOS.filter((g) => g.id === 'pnv' || g.id === 'junts').map((g) => (
+                  <button key={g.id} type="button" className="alerta-clave-btn" onClick={() => seleccionarGrupo(g)}>
+                    Escribe {g.id === 'pnv' ? 'al' : 'a'} {g.corto} ({diputados.filter((d) => d.grupo === g.grupo).length}{' '}
+                    diputados)
+                  </button>
+                ))}
+              </div>
+            </section>
+
             <section className="hemi-panel">
               <Hemiciclo diputados={diputados} selected={panelGrupo ? grupoSel.id : null} onSelect={seleccionarGrupo} />
               <div className="filters">

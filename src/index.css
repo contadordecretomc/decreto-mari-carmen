@@ -282,6 +282,74 @@ a {
   outline-offset: 2px;
 }
 
+/* Red alert above the hemicycle */
+.alerta-clave {
+  background: #e00000;
+  color: #fff;
+  border: 3px solid #000;
+  border-radius: 2px;
+  box-shadow: 6px 6px 0 #000;
+  padding: 20px 22px;
+  margin: 0 0 24px;
+  animation: alerta-pulso 1.6s ease-in-out infinite;
+}
+.alerta-clave-eyebrow {
+  display: inline-block;
+  background: #fff;
+  color: #e00000;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  margin-bottom: 10px;
+}
+.alerta-clave-titulo {
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  line-height: 1.05;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #fff;
+}
+.alerta-clave p {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  font-weight: 600;
+  max-width: 70ch;
+}
+.alerta-clave-botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.alerta-clave-btn {
+  font: inherit;
+  font-weight: 800;
+  font-size: 1rem;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  border-radius: 2px;
+  padding: 10px 16px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #000;
+}
+.alerta-clave-btn:hover,
+.alerta-clave-btn:focus-visible {
+  background: #000;
+  color: #fff;
+  outline: none;
+}
+@keyframes alerta-pulso {
+  0%, 100% { box-shadow: 6px 6px 0 #000, 0 0 0 0 rgba(224, 0, 0, 0.55); }
+  50% { box-shadow: 6px 6px 0 #000, 0 0 0 10px rgba(224, 0, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .alerta-clave { animation: none; }
+}
+
 /* Countdown: departures-board cells */
 .cuenta {
   margin: 0 0 26px;
