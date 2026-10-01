@@ -43,3 +43,6 @@ Decreto-Mari-Carmen-entregables.zip
 
 # Paquete para webs hechas con Lovable (npm run lovable)
 lovable
+
+# Página autocontenida para actualizar una carpeta ya publicada (npm run html-unico)
+unico

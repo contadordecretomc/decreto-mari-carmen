@@ -6,6 +6,7 @@ import { Ficha } from './components/Ficha';
 import { Hero } from './components/Hero';
 import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
+import { AltaBanda } from './components/AltaBanda';
 import { registrarCorreos } from './lib/contador';
 import { CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
 import { BASE, CONFIG_INYECTADA } from './lib/base';
@@ -174,6 +175,7 @@ export default function App() {
       />
 
       <ContadorBanda contador={contador} />
+      <AltaBanda />
 
       <section className="callout callout--warning">
         <div className="eyebrow">Qué se vota</div>
