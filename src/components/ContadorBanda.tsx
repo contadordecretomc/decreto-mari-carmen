@@ -24,7 +24,7 @@ function useCuentaAscendente(objetivo: number, ms = 1400) {
   return reduce ? objetivo : v;
 }
 
-export function ContadorBanda({ contador }: { contador: ContadorData | null }) {
+export function ContadorBanda({ contador, cerrada }: { contador: ContadorData | null; cerrada?: boolean }) {
   const total = contador?.correos ?? 0;
   const visible = useCuentaAscendente(total);
 
@@ -41,7 +41,7 @@ export function ContadorBanda({ contador }: { contador: ContadorData | null }) {
         {total === 1 ? 'correo' : 'correos'} a sus diputados para que voten a favor del{' '}
         <strong>Decreto Mari Carmen</strong>
       </p>
-      <p className="cbanda-meta">Se actualiza cada 10 minutos</p>
+      <p className="cbanda-meta">{cerrada ? 'Campaña cerrada · cifra final del contador' : 'Se actualiza cada 10 minutos'}</p>
     </section>
   );
 }

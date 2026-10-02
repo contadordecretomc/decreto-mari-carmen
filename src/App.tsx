@@ -7,8 +7,9 @@ import { Hero } from './components/Hero';
 import { Privacidad } from './components/Privacidad';
 import { ContadorBanda } from './components/ContadorBanda';
 import { AltaBanda } from './components/AltaBanda';
+import { Resolucion } from './components/Resolucion';
 import { registrarCorreos } from './lib/contador';
-import { CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
+import { CAMPANA_CERRADA, CONFIG_POR_DEFECTO, CONTADOR_URL, type Configuracion } from './config';
 import { BASE, CONFIG_INYECTADA } from './lib/base';
 import { GRUPOS, type GrupoInfo } from './lib/grupos';
 
@@ -134,7 +135,8 @@ export default function App() {
   }
 
   const fichaId = Number(/^#d-(\d+)$/.exec(hash)?.[1]);
-  const ficha = fichaId ? diputados.find((d) => d.id === fichaId) : undefined;
+  // Once the campaign is closed, profile pages (with their write buttons) are gone.
+  const ficha = fichaId && !CAMPANA_CERRADA ? diputados.find((d) => d.id === fichaId) : undefined;
 
   const privacidad = hash === '#privacidad';
 
@@ -171,12 +173,19 @@ export default function App() {
     <div className="app">
       <Hero
         diputados={diputados}
-        onStart={() => document.querySelector('.hemi-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+        cerrada={CAMPANA_CERRADA}
+        onStart={() =>
+          document
+            .querySelector(CAMPANA_CERRADA ? '.cbanda' : '.hemi-panel')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
       />
 
-      <ContadorBanda contador={contador} />
+      <ContadorBanda contador={contador} cerrada={CAMPANA_CERRADA} />
+      {CAMPANA_CERRADA && <Resolucion />}
       <AltaBanda />
 
+      {!CAMPANA_CERRADA && (
       <section className="callout callout--warning">
         <div className="eyebrow">Qué se vota</div>
         <p>
@@ -191,6 +200,7 @@ export default function App() {
           Se llama así por Mari Carmen, una mujer de 87 años desahuciada en Madrid cuyo caso ha movilizado a medio país.
         </p>
       </section>
+      )}
 
       <main>
         {!data && !error && <p className="status-message">Cargando diputados…</p>}
@@ -199,7 +209,16 @@ export default function App() {
             No se pudieron cargar los datos: {error}. Ejecuta <code>npm run scrape</code> y recarga.
           </p>
         )}
-        {data && (
+        {data && CAMPANA_CERRADA && (
+          // Closed campaign: the hemicycle stays as a picture of the 350 seats, greyed out and inert.
+          <section className="hemi-panel hemi-panel--cerrado" aria-label="Hemiciclo del Congreso (campaña cerrada)">
+            <div inert>
+              <Hemiciclo diputados={diputados} selected={null} onSelect={() => {}} />
+            </div>
+            <p className="hemi-cerrado-nota">La campaña ha terminado: ya no se pueden preparar correos desde esta página.</p>
+          </section>
+        )}
+        {data && !CAMPANA_CERRADA && (
           <>
             <section className="alerta-clave" role="alert" aria-labelledby="alerta-clave-titulo">
               <div className="alerta-clave-eyebrow">Alerta</div>

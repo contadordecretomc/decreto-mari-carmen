@@ -6,9 +6,11 @@ import { CuentaAtras } from './CuentaAtras';
 interface Props {
   diputados: Diputado[];
   onStart: () => void;
+  /** Campaign over: no countdown, and the button leads to the closing note. */
+  cerrada?: boolean;
 }
 
-export function Hero({ diputados, onStart }: Props) {
+export function Hero({ diputados, onStart, cerrada }: Props) {
   return (
     <header className="hero">
       <div className="hero-mosaic" aria-hidden="true">
@@ -27,15 +29,16 @@ export function Hero({ diputados, onStart }: Props) {
           Que no dejen caer el <em>Decreto Mari Carmen</em>
         </h1>
         <p className="hero-lede">
-          Mari Carmen tiene 87 años y la desahuciaron en Madrid. Este viernes, el Congreso decide si las medidas de
-          vivienda que llevan su nombre siguen adelante. Los diputados tienen que saber que las estamos mirando.
+          {cerrada
+            ? 'Mari Carmen tiene 87 años y la desahuciaron en Madrid. El Congreso vota hoy si las medidas de vivienda que llevan su nombre siguen adelante, y los diputados ya saben que les estamos mirando.'
+            : 'Mari Carmen tiene 87 años y la desahuciaron en Madrid. Este viernes, el Congreso decide si las medidas de vivienda que llevan su nombre siguen adelante. Los diputados tienen que saber que las estamos mirando.'}
         </p>
 
-        <CuentaAtras />
+        {!cerrada && <CuentaAtras />}
 
         <div className="hero-actions">
           <button type="button" className="hero-cta" onClick={onStart}>
-            Escribe a tus diputados ↓
+            {cerrada ? 'Ver el balance de la campaña ↓' : 'Escribe a tus diputados ↓'}
           </button>
         </div>
 

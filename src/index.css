@@ -350,6 +350,79 @@ a {
   .alerta-clave { animation: none; }
 }
 
+/* Closing note (campaign over) */
+.resolucion {
+  background: var(--surface);
+  border: 1.5px solid var(--line-strong);
+  border-left: 8px solid var(--accent);
+  border-radius: 2px;
+  box-shadow: var(--hard-shadow);
+  padding: 22px 24px;
+  margin-bottom: 28px;
+}
+.resolucion-titulo {
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3.6vw, 2.2rem);
+  line-height: 1.1;
+  margin: 12px 0 14px;
+  text-wrap: balance;
+}
+.resolucion-sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 18px 0 8px;
+}
+.resolucion p {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 72ch;
+  margin: 0 0 10px;
+}
+.resolucion p:last-child {
+  margin-bottom: 0;
+}
+
+/* The two outcomes of the vote, softly tinted */
+.resolucion p.escenario {
+  border-left: 4px solid;
+  border-radius: 2px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+.resolucion p.escenario--si {
+  background: #eef6ef;
+  border-color: #5f9a6c;
+}
+.escenario--si strong {
+  color: #2f6b3d;
+}
+.resolucion p.escenario--no {
+  background: #fbeeec;
+  border-color: #c4705f;
+}
+.escenario--no strong {
+  color: #9c3b28;
+}
+
+/* Hemicycle once the campaign is closed: greyed out, not clickable */
+.hemi-panel--cerrado .hemi {
+  filter: grayscale(1);
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.hemi-cerrado-nota {
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 10px 0 0;
+}
+
 /* Countdown: departures-board cells */
 .cuenta {
   margin: 0 0 26px;

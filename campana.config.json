@@ -1,8 +1,9 @@
 {
-  "_instrucciones": "Datos propios de la campaña. Si haces tu propia copia de la web, este es el archivo que hay que editar. goatcounter: código de tu sitio en GoatCounter (el de https://CODIGO.goatcounter.com). githubPages: dirección de tu copia en GitHub Pages, terminada en /; de ahí se leen el contador y la imagen para redes. correoContacto: correo por defecto del aviso de privacidad. altas: buzón que recibe las peticiones voluntarias para recibir información y organizaciones que se ofrecen (cada una se marca por separado).",
+  "_instrucciones": "Datos propios de la campaña. Si haces tu propia copia de la web, este es el archivo que hay que editar. goatcounter: código de tu sitio en GoatCounter (el de https://CODIGO.goatcounter.com). githubPages: dirección de tu copia en GitHub Pages, terminada en /; de ahí se leen el contador y la imagen para redes. correoContacto: correo por defecto del aviso de privacidad. cerrada: true cuando la campaña ha terminado (la web muestra el balance y ya no deja preparar correos). altas: buzón que recibe las peticiones voluntarias para recibir información y organizaciones que se ofrecen (cada una se marca por separado).",
   "goatcounter": "contadordecretomc",
   "githubPages": "https://contadordecretomc.github.io/decreto-mari-carmen/",
   "correoContacto": "contadordecretomc@gmail.com",
+  "cerrada": true,
   "altas": {
     "buzon": "contadordecretomc@gmail.com",
     "gestiona": "WokeUp",

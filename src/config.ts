@@ -11,6 +11,10 @@ export const GOATCOUNTER_CODE: string = campana.goatcounter;
 // The counter is always read from the GitHub Pages copy, which the scheduled
 // workflow refreshes every 10 minutes. The copy uploaded with the page
 // (data/contador.json) is the fallback.
+// Campaign over: the page shows the final count and a closing note, and no longer
+// lets people prepare emails (hemicycle disabled, no panel, no profile pages).
+export const CAMPANA_CERRADA: boolean = Boolean((campana as { cerrada?: boolean }).cerrada);
+
 export const CONTADOR_URL = `${campana.githubPages}data/contador.json`;
 
 // Defaults when configuracion.json is missing or unreadable.
