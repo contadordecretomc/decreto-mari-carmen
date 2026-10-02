@@ -1,12 +1,12 @@
-# Builds the static site and publishes it to GitHub Pages, refreshing the
-# "correos preparados" counter from GoatCounter on every run.
+# Builds the static site and publishes it to GitHub Pages.
+# Campaign closed: the counter is frozen at the final figure committed in
+# public/data/contador.json. To restart it, bring back the schedule and the
+# "Actualizar contador de correos" step (see git history).
 name: Publicar web
 
 on:
   push:
     branches: [main]
-  schedule:
-    - cron: '*/10 * * * *' # GitHub may delay scheduled runs a few minutes
   workflow_dispatch:
 
 permissions:
@@ -31,11 +31,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Actualizar contador de correos
-        run: node scripts/update-contador.mjs
-        env:
-          GOATCOUNTER_SITE: ${{ vars.GOATCOUNTER_SITE }}
-          GOATCOUNTER_TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
       - run: npm run build
       # On launch day, set the repo variable REDIRIGIR_A to the new address:
       # this copy then only redirects there and keeps serving the counter file.
